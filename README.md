@@ -60,7 +60,7 @@ Deploy the bot and easily connect it to your WhatsApp account by pair code. Clic
 ### Join Us
 
 <div align="center">
-  <a href="https://t.me/codexemp">
+  <a href="https://t.me/tunzy_md">
     <img src="https://img.shields.io/badge/Join%20Telegram-0078E7?style=for-the-badge&logo=telegram&logoColor=white" alt="Join Telegram"/>
   </a>
   <a href="https://whatsapp.com/channel/0029Vb7EWFcIHphQPz7S4147">
