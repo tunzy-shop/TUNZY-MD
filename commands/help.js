@@ -223,7 +223,7 @@ async function helpCommand(sock, chatId, message) {
                     forwardingScore: 1,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363418965183791@newsletter',
+                        newsletterJid: '120363422591784062@newsletter',
                         newsletterName: 'TUNZY-MD',
                         serverMessageId: -1
                     }
@@ -237,7 +237,7 @@ async function helpCommand(sock, chatId, message) {
                     forwardingScore: 1,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363418965183791@newsletter',
+                        newsletterJid: '120363422591784062@newsletter',
                         newsletterName: 'TUNZY-MD by CODEBREAKER x TUNZY',
                         serverMessageId: -1
                     } 

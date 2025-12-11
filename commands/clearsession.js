@@ -8,8 +8,8 @@ const channelInfo = {
         forwardingScore: 999,
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
-            newsletterJid: '120363404912601381@newsletter',
-            newsletterName: 'ALASTOR - XD',
+            newsletterJid: '120363422591784062@newsletter',
+            newsletterName: 'TUNZY-MD',
             serverMessageId: -1
         }
     }

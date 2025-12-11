@@ -10,7 +10,7 @@ async function pairCommand(sock, chatId, message, q) {
                     forwardingScore: 1,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363418965183791@newsletter',
+                        newsletterJid: '120363422591784062@newsletter',
                         newsletterName: 'TUNZY-MD',
                         serverMessageId: -1
                     }
@@ -29,7 +29,7 @@ async function pairCommand(sock, chatId, message, q) {
                     forwardingScore: 1,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363418965183791@newsletter',
+                        newsletterJid: '120363422591784062@newsletter',
                         newsletterName: 'TUNZY-MD',
                         serverMessageId: -1
                     }
@@ -48,7 +48,7 @@ async function pairCommand(sock, chatId, message, q) {
                         forwardingScore: 1,
                         isForwarded: true,
                         forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363418965183791@newsletter',
+                            newsletterJid: '120363422591784062@newsletter',
                             newsletterName: 'TUNZY-MS',
                             serverMessageId: -1
                         }
@@ -62,7 +62,7 @@ async function pairCommand(sock, chatId, message, q) {
                     forwardingScore: 1,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363418965183791@newsletter',
+                        newsletterJid: '120363422591784062@newsletter',
                         newsletterName: 'TUNZY-MD',
                         serverMessageId: -1
                     }
@@ -85,7 +85,7 @@ async function pairCommand(sock, chatId, message, q) {
                             forwardingScore: 1,
                             isForwarded: true,
                             forwardedNewsletterMessageInfo: {
-                                newsletterJid: '120363418965183791@newsletter',
+                                newsletterJid: '120363422591784062@newsletter',
                                 newsletterName: 'TUNZY-MD',
                                 serverMessageId: -1
                             }
@@ -106,7 +106,7 @@ async function pairCommand(sock, chatId, message, q) {
                         forwardingScore: 1,
                         isForwarded: true,
                         forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363418965183791@newsletter',
+                            newsletterJid: '120363422591784062@newsletter',
                             newsletterName: 'TUNZY-MD',
                             serverMessageId: -1
                         }
@@ -122,7 +122,7 @@ async function pairCommand(sock, chatId, message, q) {
                 forwardingScore: 1,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363418965183791@newsletter',
+                    newsletterJid: '120363422591784062@newsletter',
                     newsletterName: 'TUNZY-MD',
                     serverMessageId: -1
                 }
