@@ -69,51 +69,61 @@ Deploy the bot and easily connect it to your WhatsApp account by pair code. Clic
 </div>
 
 ---
-### 📺 Prerequisites: Watch This First!
-Before you begin, you **must** have a GitHub account and watch the tutorial video.
+## 📋 Prerequisites
+Before starting, you must:
+1. **Have a GitHub account** (create one at [github.com](https://github.com/) if you don't)
+2. **Watch the tutorial video** below to understand the process
 
-> ⚠️ **Important:** The video explains the essential steps of forking, starring, and creating a katabumb account. Do not proceed without watching it.
+---
 
+## 🎬 Tutorial Video
 <div align="center">
   <a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x" target="_blank">
-    <img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" height="40">
-    <br>
-    <button style="background-color: #ff0000; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;">
-      🎬 WATCH THE FULL TUTORIAL VIDEO
+    <button style="background-color: #ff0000; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20" height="20" alt="YouTube">
+      Watch Full Tutorial (How to Fork, Star & Create Katabumb Account)
     </button>
   </a>
 </div>
 
 ---
 
-### 🔄 How to Fork & Star the Repository
-1. **Create a GitHub Account** (if you don't have one) at [github.com](https://github.com/)
-2. **Go to the Project Repository**
-3. Click the **"Fork"** button (top-right) to create your own copy
-4. Click the **"Star"** button to show support and get updates
+## 🔄 How to Fork & Star the Repository
+
+### Step 1: Create GitHub Account
+- Go to [github.com](https://github.com/)
+- Click "Sign up" and follow the registration process
+
+### Step 2: Find the Repository
+- Navigate to the project repository URL
+
+### Step 3: Fork the Repository
+- Click the **"Fork"** button in the top-right corner
+- Select your account as the destination
+- Wait for the forking process to complete
+
+### Step 4: Star the Repository
+- Click the **"Star"** button (next to the Fork button)
+- This shows support and helps you track updates
 
 ---
 
-### <span style="color: #ff0000;">⬤ METHOD 1: Deploy on Katabumb + Webpair (Easiest)</span>
-Follow the complete process shown in the video above for the easiest deployment method using both Katabumb and Webpair.
+## 🚀 Deployment Methods
 
+### 🔴 METHOD 1: Deploy on Katabumb + Webpair (Easiest)
 <div align="center">
   <a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x" target="_blank">
-    <button style="background-color: #ff0000; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 10px auto;">
+    <button style="background-color: #ff0000; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
       <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20" height="20" alt="YouTube">
       Watch Method 1 Tutorial
     </button>
   </a>
 </div>
 
----
-
-### <span style="color: #ff0000;">⬤ METHOD 2: Deploy on Katabumb Only</span>
-This method is for deployment using only the Katabumb panel, as demonstrated in the same tutorial video.
-
+### 🔴 METHOD 2: Deploy on Katabumb Only
 <div align="center">
   <a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x" target="_blank">
-    <button style="background-color: #ff0000; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 10px auto;">
+    <button style="background-color: #ff0000; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
       <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20" height="20" alt="YouTube">
       Watch Method 2 Tutorial
     </button>
@@ -122,7 +132,15 @@ This method is for deployment using only the Katabumb panel, as demonstrated in 
 
 ---
 
-**Remember:** The video is your main guide. Please **fork**, **star** the repo, and join the channel for more updates!
+## ✅ Summary
+1. **Create GitHub account** (if needed)
+2. **Watch the tutorial video** 
+3. **Fork** the repository to your account
+4. **Star** the repository for support
+5. **Choose a deployment method** (Method 1 or 2)
+6. **Follow the video instructions** for your chosen method
+
+**Remember:** Always fork and star the repository before deploying!
 
 ## ⚙️ Features
 
