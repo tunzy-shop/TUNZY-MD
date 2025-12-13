@@ -69,6 +69,58 @@ Deploy the bot and easily connect it to your WhatsApp account by pair code. Clic
 </div>
 
 ---
+### Tutorial 
+📺 Prerequisites: Watch This First!
+
+Before you begin, you must have a GitHub account and watch the tutorial video.
+
+⚠️ Important: The video explains the essential steps of forking, starring, and creating a katabumb account. Do not proceed without watching it.
+
+<a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x">
+    <div style="text-align: center; margin: 20px 0;">
+        <div style="background-color: #ff0000; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; display: inline-block; border: none; cursor: pointer; text-decoration: none;">
+            🎬 WATCH THE FULL TUTORIAL VIDEO HERE
+        </div>
+        <p style="color: #666; margin-top: 5px;">https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x</p>
+    </div>
+</a>
+
+---
+
+🔄 How to Fork & Star the Repository
+
+1. Create a GitHub Account (if you don't have one) at github.com.
+2. Go to the Project Repository.
+3. Click the "Fork" button (top-right) to create your own copy.
+4. Click the "Star" button to show support and get updates.
+
+---
+
+<span style="color: #ff0000;">⬤ METHOD 1: Deploy on Katabumb + Webpair (Easiest)</span>
+
+Follow the complete process shown in the video above for the easiest deployment method using both Katabumb and Webpair.
+
+<a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x">
+    <div style="background-color: #ff0000; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; display: inline-block; border: none; cursor: pointer; text-decoration: none;">
+        🎥 Watch Method 1 Tutorial
+    </div>
+</a>
+
+---
+
+<span style="color: #ff0000;">⬤ METHOD 2: Deploy on Katabumb Only</span>
+
+This method is for deployment using only the Katabumb panel, as demonstrated in the same tutorial video.
+
+<a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x">
+    <div style="background-color: #ff0000; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; display: inline-block; border: none; cursor: pointer; text-decoration: none;">
+        🎥 Watch Method 2 Tutorial
+    </div>
+</a>
+
+---
+
+Remember: The video is your main guide. Please fork, star the repo, and join the channel for more updates!
 
 ## ⚙️ Features
 
