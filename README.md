@@ -69,78 +69,63 @@ Deploy the bot and easily connect it to your WhatsApp account by pair code. Clic
 </div>
 
 ---
-## 📋 Prerequisites
-Before starting, you must:
-1. **Have a GitHub account** (create one at [github.com](https://github.com/) if you don't)
-2. **Watch the tutorial video** below to understand the process
+## 🎬 Watch the Full Tutorial First
 
----
+Before you begin, you must watch the tutorial video below. If you don't have a GitHub account, you will need to create one first.
 
-## 🎬 Tutorial Video
 <div align="center">
   <a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x" target="_blank">
     <button style="background-color: #ff0000; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
       <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20" height="20" alt="YouTube">
-      Watch Full Tutorial (How to Fork, Star & Create Katabumb Account)
+      How to Fork, Star and Create Katabumb Account
     </button>
   </a>
 </div>
 
----
+## ⚠️ Important: You Need a GitHub Account First
 
-## 🔄 How to Fork & Star the Repository
+To fork and star the repository as shown in the video, you must have a GitHub account. If you don't have one yet, click the button below to create it. The signup process is quick and free.
 
-### Step 1: Create GitHub Account
-- Go to [github.com](https://github.com/)
-- Click "Sign up" and follow the registration process
+<div align="center">
+  <a href="https://github.com/signup" target="_blank">
+    <button style="background-color: #24292e; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" width="20" height="20" alt="GitHub">
+      Create a GitHub Account
+    </button>
+  </a>
+</div>
 
-### Step 2: Find the Repository
-- Navigate to the project repository URL
+## 🔴 METHOD 1: Deploy on Katabumb + Webpair (Easiest)
 
-### Step 3: Fork the Repository
-- Click the **"Fork"** button in the top-right corner
-- Select your account as the destination
-- Wait for the forking process to complete
-
-### Step 4: Star the Repository
-- Click the **"Star"** button (next to the Fork button)
-- This shows support and helps you track updates
-
----
-
-## 🚀 Deployment Methods
-
-### 🔴 METHOD 1: Deploy on Katabumb + Webpair (Easiest)
 <div align="center">
   <a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x" target="_blank">
     <button style="background-color: #ff0000; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
       <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20" height="20" alt="YouTube">
-      Watch Method 1 Tutorial
+      METHOD 1: Deploy on Katabumb + Webpair
     </button>
   </a>
 </div>
 
-### 🔴 METHOD 2: Deploy on Katabumb Only
+## 🔴 METHOD 2: Deploy on Katabumb Only
+
 <div align="center">
   <a href="https://youtu.be/uF7DBNoKWdU?si=uveSl5KAcda0Yw5x" target="_blank">
     <button style="background-color: #ff0000; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
       <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20" height="20" alt="YouTube">
-      Watch Method 2 Tutorial
+      METHOD 2: Deploy on Katabumb Only
     </button>
   </a>
 </div>
 
----
+## ✅ Summary Checklist
 
-## ✅ Summary
-1. **Create GitHub account** (if needed)
-2. **Watch the tutorial video** 
-3. **Fork** the repository to your account
-4. **Star** the repository for support
-5. **Choose a deployment method** (Method 1 or 2)
-6. **Follow the video instructions** for your chosen method
+Follow these steps in order:
+1.  **Create a GitHub Account** (use the black button above).
+2.  **Watch the Main Tutorial Video** (use the red button at the top).
+3.  **Fork & Star the Repository** (as shown in the video).
+4.  **Choose a Deployment Method** (Method 1 or 2) and watch its specific video.
 
-**Remember:** Always fork and star the repository before deploying!
+**Remember:** Always fork and star the repository before deploying.
 
 ## ⚙️ Features
 
