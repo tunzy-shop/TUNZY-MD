@@ -9,8 +9,7 @@ async function helpCommand(sock, chatId, message) {
 |✦ Version: *${settings.version || '1.0.0'}*
 |✦ by ${settings.botOwner || 'TUNZY'}
 |✦ YouTube : ${global.ytch}
-━━━━━━━━━━━━━━━━━┈⊷
-`Owner of bot should note this always use .update to get the latest version and stay active on channel` 
+━━━━━━━━━━━━━━━━━┈⊷ 
 ╭━━〔 📌 CORE COMMANDS 〕━━┈⊷
 │  ✪ .menu / .help
 │  ✪ .ping
