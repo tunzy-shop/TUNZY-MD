@@ -238,4 +238,4 @@ async function downloadMedia(message, filePath, sock) {
     }
 }
 
-module.exports = savestatusCommand;
+module.exports = saveCommand;
