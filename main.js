@@ -40,7 +40,7 @@ const { autotypingCommand, isAutotypingEnabled, handleAutotypingForMessage, hand
 const { autoreadCommand, isAutoreadEnabled, handleAutoread } = require('./commands/autoread');
 
 // Command imports
-const savestatusCommand = require('./commands/save');
+const saveCommand = require('./commands/save');
 const unpairCommand = require('./commands/unpair');
 const autojoinCommand = require('./commands/autojoin');
 const pairCommand = require('./commands/pair');
