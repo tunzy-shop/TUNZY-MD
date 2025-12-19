@@ -13,8 +13,8 @@ async function savestatusCommand(sock, chatId, message) {
                     forwardingScore: 1,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363422591784062@newsletter',
-                        newsletterName: 'TUNZY-MD',
+                        newsletterJid: '120363404912601381@newsletter',
+                        newsletterName: 'ALASTOR-XMD',
                         serverMessageId: -1
                     }
                 }
@@ -23,21 +23,32 @@ async function savestatusCommand(sock, chatId, message) {
 
         // Check message type
         let mediaType = null;
-        if (quotedMessage.imageMessage) mediaType = 'image';
-        else if (quotedMessage.videoMessage) mediaType = 'video';
-        else if (quotedMessage.audioMessage) mediaType = 'audio';
-        else if (quotedMessage.extendedTextMessage) mediaType = 'text';
-        else if (quotedMessage.conversation) mediaType = 'text';
+        let mediaMessage = null;
+        
+        if (quotedMessage.imageMessage) {
+            mediaType = 'image';
+            mediaMessage = quotedMessage.imageMessage;
+        } else if (quotedMessage.videoMessage) {
+            mediaType = 'video';
+            mediaMessage = quotedMessage.videoMessage;
+        } else if (quotedMessage.audioMessage) {
+            mediaType = 'audio';
+            mediaMessage = quotedMessage.audioMessage;
+        } else if (quotedMessage.extendedTextMessage) {
+            mediaType = 'text';
+        } else if (quotedMessage.conversation) {
+            mediaType = 'text';
+        }
 
         if (!mediaType) {
             return await sock.sendMessage(chatId, {
-                text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *❌ UNSUPPORTED*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nThis type cannot be saved as status.",
+                text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *⚠️ UNSUPPORTED*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nThis type cannot be saved as status.",
                 contextInfo: {
                     forwardingScore: 1,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363422591784062@newsletter',
-                        newsletterName: 'TUNZY-MD',
+                        newsletterJid: '120363404912601381@newsletter',
+                        newsletterName: 'ALASTOR-XMD',
                         serverMessageId: -1
                     }
                 }
@@ -46,13 +57,13 @@ async function savestatusCommand(sock, chatId, message) {
 
         // Processing message
         await sock.sendMessage(chatId, {
-            text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *⏳ DOWNLOADING*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nDownloading status...",
+            text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *⏬ DOWNLOADING*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nDownloading status...",
             contextInfo: {
                 forwardingScore: 1,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363422591784062@newsletter',
-                    newsletterName: 'TUNZY-MD',
+                    newsletterJid: '120363404912601381@newsletter',
+                    newsletterName: 'ALASTOR-XMD',
                     serverMessageId: -1
                 }
             }
@@ -70,19 +81,19 @@ async function savestatusCommand(sock, chatId, message) {
             switch (mediaType) {
                 case 'image':
                     filePath = path.join(tempDir, `status_${timestamp}.jpg`);
-                    await downloadMedia(quotedMessage.imageMessage, filePath);
-                    caption = '📸 Status Image Saved';
+                    await downloadMedia(mediaMessage, filePath, sock);
+                    caption = '🖼️ Status Image Saved';
                     break;
                     
                 case 'video':
                     filePath = path.join(tempDir, `status_${timestamp}.mp4`);
-                    await downloadMedia(quotedMessage.videoMessage, filePath);
+                    await downloadMedia(mediaMessage, filePath, sock);
                     caption = '🎥 Status Video Saved';
                     break;
                     
                 case 'audio':
                     filePath = path.join(tempDir, `status_${timestamp}.ogg`);
-                    await downloadMedia(quotedMessage.audioMessage, filePath);
+                    await downloadMedia(mediaMessage, filePath, sock);
                     caption = '🎵 Status Audio Saved';
                     break;
                     
@@ -94,8 +105,11 @@ async function savestatusCommand(sock, chatId, message) {
                     break;
             }
 
-            if (fs.existsSync(filePath)) {
-                const fileBuffer = fs.readFileSync(filePath);
+            if (mediaType !== 'text' && !fs.existsSync(filePath)) {
+                throw new Error('Download failed - file not created');
+            }
+
+            if (mediaType !== 'text') {
                 const fileSize = fs.statSync(filePath).size;
                 
                 if (fileSize > 50 * 1024 * 1024) {
@@ -103,15 +117,17 @@ async function savestatusCommand(sock, chatId, message) {
                     throw new Error('File too large (max 50MB)');
                 }
 
+                const fileBuffer = fs.readFileSync(filePath);
+                
                 // Send the file
                 const sendOptions = {
-                    caption: `╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *✅ STATUS SAVED*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024 / 1024).toFixed(2)} MB`,
+                    caption: `╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *😈 STATUS STOLEN 😈*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024 / 1024).toFixed(2)} MB`,
                     contextInfo: {
                         forwardingScore: 1,
                         isForwarded: true,
                         forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363422591784062@newsletter',
-                            newsletterName: 'TUNZY-MD',
+                            newsletterJid: '120363404912601381@newsletter',
+                            newsletterName: 'ALASTOR-XMD',
                             serverMessageId: -1
                         }
                     }
@@ -123,39 +139,61 @@ async function savestatusCommand(sock, chatId, message) {
                     await sock.sendMessage(chatId, { video: fileBuffer, ...sendOptions }, { quoted: message });
                 } else if (mediaType === 'audio') {
                     await sock.sendMessage(chatId, { audio: fileBuffer, ...sendOptions }, { quoted: message });
-                } else if (mediaType === 'text') {
-                    await sock.sendMessage(chatId, {
-                        document: fileBuffer,
-                        fileName: `status_${timestamp}.txt`,
-                        mimetype: 'text/plain',
-                        ...sendOptions
-                    }, { quoted: message });
                 }
-
-                // Cleanup after 30 seconds
-                setTimeout(() => {
-                    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-                }, 30000);
-
             } else {
-                throw new Error('Download failed');
+                // For text files
+                const fileBuffer = fs.readFileSync(filePath);
+                const fileSize = fileBuffer.length;
+                
+                await sock.sendMessage(chatId, {
+                    document: fileBuffer,
+                    fileName: `status_${timestamp}.txt`,
+                    mimetype: 'text/plain',
+                    caption: `╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *🤖 STATUS STOLEN 🤖*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024).toFixed(2)} KB`,
+                    contextInfo: {
+                        forwardingScore: 1,
+                        isForwarded: true,
+                        forwardedNewsletterMessageInfo: {
+                            newsletterJid: '120363404912601381@newsletter',
+                            newsletterName: 'ALASTOR-XMD',
+                            serverMessageId: -1
+                        }
+                    }
+                }, { quoted: message });
             }
+
+            // Cleanup after 30 seconds
+            setTimeout(() => {
+                if (fs.existsSync(filePath)) {
+                    try {
+                        fs.unlinkSync(filePath);
+                    } catch (cleanupError) {
+                        console.error('Cleanup error:', cleanupError);
+                    }
+                }
+            }, 30000);
 
         } catch (downloadError) {
             console.error('Download error:', downloadError);
-            throw downloadError;
+            
+            // Clean up any partial file
+            if (filePath && fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+            
+            throw new Error(downloadError.message || 'Failed to download media');
         }
 
     } catch (error) {
         console.error('Save status error:', error);
         await sock.sendMessage(chatId, {
-            text: `╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *❌ ERROR*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nFailed to save status:\n${error.message}`,
+            text: `╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *❌ ERROR*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nFailed to save status:\n${error.message || 'Unknown error'}`,
             contextInfo: {
                 forwardingScore: 1,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363422591784062@newsletter',
-                    newsletterName: 'TUNZY-MD',
+                    newsletterJid: '120363404912601381@newsletter',
+                    newsletterName: 'ALASTOR-XMD',
                     serverMessageId: -1
                 }
             }
@@ -163,18 +201,41 @@ async function savestatusCommand(sock, chatId, message) {
     }
 }
 
-async function downloadMedia(message, filePath) {
-    const stream = await downloadContentFromMessage(message, 'buffer');
-    const buffer = await streamToBuffer(stream);
-    fs.writeFileSync(filePath, buffer);
-}
-
-async function streamToBuffer(stream) {
-    const chunks = [];
-    for await (const chunk of stream) {
-        chunks.push(chunk);
+async function downloadMedia(message, filePath, sock) {
+    try {
+        // Get the correct media type for download
+        let mediaType = 'image';
+        if (message.mimetype?.includes('video')) mediaType = 'video';
+        if (message.mimetype?.includes('audio')) mediaType = 'audio';
+        
+        // Try to get the stream
+        let stream;
+        try {
+            stream = await downloadContentFromMessage(message, mediaType);
+        } catch (streamError) {
+            // Fallback to generic stream
+            stream = await downloadContentFromMessage(message, 'buffer');
+        }
+        
+        // Write stream to file
+        const writeStream = fs.createWriteStream(filePath);
+        
+        for await (const chunk of stream) {
+            writeStream.write(chunk);
+        }
+        
+        writeStream.end();
+        
+        // Wait for write to complete
+        await new Promise((resolve, reject) => {
+            writeStream.on('finish', resolve);
+            writeStream.on('error', reject);
+        });
+        
+    } catch (error) {
+        console.error('Download media error:', error);
+        throw error;
     }
-    return Buffer.concat(chunks);
 }
 
 module.exports = savestatusCommand;
