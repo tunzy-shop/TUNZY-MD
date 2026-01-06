@@ -8,16 +8,7 @@ async function savestatusCommand(sock, chatId, message) {
         
         if (!quotedMessage) {
             return await sock.sendMessage(chatId, {
-                text: "✪ *📱 SAVE STATUS*\n\n*Usage:* Reply to a status with `.savestatus`\n\n*How to:*\n1. Go to status\n2. Reply to it\n3. Type: .savestatus\n\n*Supported:* Images, Videos, Text, Audio",
-                contextInfo: {
-                    forwardingScore: 1,
-                    isForwarded: true,
-                    forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363422591784062@newsletter',
-                        newsletterName: 'TUNZY-MD',
-                        serverMessageId: -1
-                    }
-                }
+                text: "✪ *📱 SAVE STATUS*\n\n*Usage:* Reply to a status with `.savestatus`\n\n*How to:*\n1. Go to status\n2. Reply to it\n3. Type: .savestatus\n\n*Supported:* Images, Videos, Text, Audio"
             }, { quoted: message });
         }
 
@@ -42,32 +33,9 @@ async function savestatusCommand(sock, chatId, message) {
 
         if (!mediaType) {
             return await sock.sendMessage(chatId, {
-                text: "✪ *⚠️ UNSUPPORTED*\n\nThis type cannot be saved as status.",
-                contextInfo: {
-                    forwardingScore: 1,
-                    isForwarded: true,
-                    forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363422591784062@newsletter',
-                        newsletterName: 'TUNZY-MD',
-                        serverMessageId: -1
-                    }
-                }
+                text: "✪ *⚠️ UNSUPPORTED*\n\nThis type cannot be saved as status."
             }, { quoted: message });
         }
-
-        // Processing message
-        await sock.sendMessage(chatId, {
-            text: "✪ *⏬ DOWNLOADING*\n\nDownloading status...",
-            contextInfo: {
-                forwardingScore: 1,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363422591784062@newsletter',
-                    newsletterName: 'TUNZY-MD',
-                    serverMessageId: -1
-                }
-            }
-        }, { quoted: message });
 
         // Create temp directory
         const tempDir = path.join(__dirname, '../temp');
@@ -109,56 +77,37 @@ async function savestatusCommand(sock, chatId, message) {
                 throw new Error('Download failed - file not created');
             }
 
-            if (mediaType !== 'text') {
-                const fileSize = fs.statSync(filePath).size;
-                
-                if (fileSize > 50 * 1024 * 1024) {
-                    fs.unlinkSync(filePath);
-                    throw new Error('File too large (max 50MB)');
-                }
+            const fileSize = fs.statSync(filePath).size;
+            
+            if (fileSize > 50 * 1024 * 1024) {
+                fs.unlinkSync(filePath);
+                throw new Error('File too large (max 50MB)');
+            }
 
-                const fileBuffer = fs.readFileSync(filePath);
-                
-                // Send the file
-                const sendOptions = {
-                    caption: `✪ *STATUS SAVED*\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024 / 1024).toFixed(2)} MB\n\n💧 *Watermark:* TUNZY-MD`,
-                    contextInfo: {
-                        forwardingScore: 1,
-                        isForwarded: true,
-                        forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363422591784062@newsletter',
-                            newsletterName: 'TUNZY-MD',
-                            serverMessageId: -1
-                        }
-                    }
-                };
-
-                if (mediaType === 'image') {
-                    await sock.sendMessage(chatId, { image: fileBuffer, ...sendOptions }, { quoted: message });
-                } else if (mediaType === 'video') {
-                    await sock.sendMessage(chatId, { video: fileBuffer, ...sendOptions }, { quoted: message });
-                } else if (mediaType === 'audio') {
-                    await sock.sendMessage(chatId, { audio: fileBuffer, ...sendOptions }, { quoted: message });
-                }
-            } else {
-                // For text files
-                const fileBuffer = fs.readFileSync(filePath);
-                const fileSize = fileBuffer.length;
-                
+            const fileBuffer = fs.readFileSync(filePath);
+            
+            // Send the file directly
+            if (mediaType === 'image') {
+                await sock.sendMessage(chatId, { 
+                    image: fileBuffer,
+                    caption: `✪ *STATUS SAVED*\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024 / 1024).toFixed(2)} MB`
+                }, { quoted: message });
+            } else if (mediaType === 'video') {
+                await sock.sendMessage(chatId, { 
+                    video: fileBuffer,
+                    caption: `✪ *STATUS SAVED*\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024 / 1024).toFixed(2)} MB`
+                }, { quoted: message });
+            } else if (mediaType === 'audio') {
+                await sock.sendMessage(chatId, { 
+                    audio: fileBuffer,
+                    caption: `✪ *STATUS SAVED*\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024 / 1024).toFixed(2)} MB`
+                }, { quoted: message });
+            } else if (mediaType === 'text') {
                 await sock.sendMessage(chatId, {
                     document: fileBuffer,
                     fileName: `status_${timestamp}.txt`,
                     mimetype: 'text/plain',
-                    caption: `✪ *STATUS SAVED*\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024).toFixed(2)} KB\n\n💧 *Watermark:* TUNZY-MD`,
-                    contextInfo: {
-                        forwardingScore: 1,
-                        isForwarded: true,
-                        forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363422591784062@newsletter',
-                            newsletterName: 'TUNZY-MD',
-                            serverMessageId: -1
-                        }
-                    }
+                    caption: `✪ *STATUS SAVED*\n\n${caption}\n📁 *File:* ${path.basename(filePath)}\n📊 *Size:* ${(fileSize / 1024).toFixed(2)} KB`
                 }, { quoted: message });
             }
 
@@ -187,37 +136,24 @@ async function savestatusCommand(sock, chatId, message) {
     } catch (error) {
         console.error('Save status error:', error);
         await sock.sendMessage(chatId, {
-            text: `✪ *❌ ERROR*\n\nFailed to save status:\n${error.message || 'Unknown error'}\n\n💧 *Watermark:* TUNZY-MD`,
-            contextInfo: {
-                forwardingScore: 1,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363422591784062@newsletter',
-                    newsletterName: 'TUNZY-MD',
-                    serverMessageId: -1
-                }
-            }
+            text: `✪ *❌ ERROR*\n\nFailed to save status:\n${error.message || 'Unknown error'}`
         }, { quoted: message });
     }
 }
 
 async function downloadMedia(message, filePath, sock) {
     try {
-        // Get the correct media type for download
         let mediaType = 'image';
         if (message.mimetype?.includes('video')) mediaType = 'video';
         if (message.mimetype?.includes('audio')) mediaType = 'audio';
         
-        // Try to get the stream
         let stream;
         try {
             stream = await downloadContentFromMessage(message, mediaType);
         } catch (streamError) {
-            // Fallback to generic stream
             stream = await downloadContentFromMessage(message, 'buffer');
         }
         
-        // Write stream to file
         const writeStream = fs.createWriteStream(filePath);
         
         for await (const chunk of stream) {
@@ -226,7 +162,6 @@ async function downloadMedia(message, filePath, sock) {
         
         writeStream.end();
         
-        // Wait for write to complete
         await new Promise((resolve, reject) => {
             writeStream.on('finish', resolve);
             writeStream.on('error', reject);
