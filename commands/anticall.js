@@ -25,7 +25,7 @@ async function anticallCommand(sock, chatId, message, args) {
     const sub = (args || '').trim().toLowerCase();
 
     if (!sub || (sub !== 'on' && sub !== 'off' && sub !== 'status')) {
-        await sock.sendMessage(chatId, { text: '*ANTICALL*\n\n.anticall on  - Enable auto-block on incoming calls\n.anticall off - Disable anticall\n.anticall status - Show current status' }, { quoted: message });
+        await sock.sendMessage(chatId, { text: '*ANTICALL*\n\n.anticall on  - Enable reject an incoming calls\n.anticall off - Disable anticall\n.anticall status - Show current status' }, { quoted: message });
         return;
     }
 
