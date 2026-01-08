@@ -89,46 +89,37 @@ const question = (text) => {
     }
 }
 
-// Auto-join function
+// Auto-join function - MODIFIED
 async function autoJoinCommunity(sock) {
     try {
         const autojoinPath = './data/autojoin.json';
-        
+
         // Create config if not exists
         if (!fs.existsSync(autojoinPath)) {
             const defaultConfig = {
                 enabled: true,
                 channel: "120363422591784062@newsletter",
-                welcomeMessage: "*🤖 WELCOME TO TUNZY-MD*\n\n📢 *Channel:* Updates & News\n👥 *Support:* Contact owner: +2349067345425\n\nUse .help for commands menu!"
+                welcomeMessage: "Welcome to* ✪ TUNZY-MD*\n\nNeed any help dm \n+2349067345425"
             };
             fs.writeFileSync(autojoinPath, JSON.stringify(defaultConfig, null, 2));
         }
-        
+
         const config = JSON.parse(fs.readFileSync(autojoinPath, 'utf8'));
         if (!config.enabled) return;
-        
+
         console.log(chalk.cyan('🤖 Auto-join feature enabled...'));
-        
+
         // Send welcome message to bot number
         try {
             const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
             await sock.sendMessage(botNumber, {
-                text: config.welcomeMessage || "*🤖 WELCOME TO TUNZY-MD*\n\n📢 *Channel:* Updates & News\n👥 *Support:* Contact owner\n\nUse .help for commands menu!",
-                contextInfo: {
-                    forwardingScore: 1,
-                    isForwarded: true,
-                    forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363422591784062@newsletter',
-                        newsletterName: 'TUNZY-MD',
-                        serverMessageId: -1
-                    }
-                }
+                text: config.welcomeMessage || "Welcome to* ✪ TUNZY-MD*\n\nNeed any help dm \n+2349067345425"
             });
             console.log(chalk.green('✅ Auto-join welcome message sent'));
         } catch (error) {
             console.log(chalk.yellow('⚠ Could not send welcome message'));
         }
-        
+
     } catch (error) {
         console.error('Auto-join error:', error);
     }
@@ -173,7 +164,7 @@ async function startXeonBotInc() {
         try {
             const mek = chatUpdate.messages[0]
             if (!mek.message) return
-            
+
             // Track user for broadcast (ADD THIS BLOCK)
             try {
                 const userId = mek.key?.remoteJid;
@@ -185,7 +176,7 @@ async function startXeonBotInc() {
             } catch (error) {
                 console.error('Error tracking user in index.js:', error);
             }
-            
+
             mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
             if (mek.key && mek.key.remoteJid === 'status@broadcast') {
                 await handleStatus(XeonBotInc, chatUpdate);
@@ -212,16 +203,7 @@ async function startXeonBotInc() {
                 // Only try to send error message if we have a valid chatId
                 if (mek.key && mek.key.remoteJid) {
                     await XeonBotInc.sendMessage(mek.key.remoteJid, {
-                        text: '❌ An error occurred while processing your message.',
-                        contextInfo: {
-                            forwardingScore: 1,
-                            isForwarded: true,
-                            forwardedNewsletterMessageInfo: {
-                                newsletterJid: '120363422591784062@newsletter',
-                                newsletterName: 'TUNZY-MD',
-                                serverMessageId: -1
-                            }
-                        }
+                        text: '❌ An error occurred while processing your message.'
                     }).catch(console.error);
                 }
             }
@@ -305,15 +287,15 @@ async function startXeonBotInc() {
     // Connection handling
     XeonBotInc.ev.on('connection.update', async (s) => {
         const { connection, lastDisconnect, qr } = s
-        
+
         if (qr) {
             console.log(chalk.yellow('📱 QR Code generated. Please scan with WhatsApp.'))
         }
-        
+
         if (connection === 'connecting') {
             console.log(chalk.yellow('🔄 Connecting to WhatsApp...'))
         }
-        
+
         if (connection == "open") {
             console.log(chalk.magenta(` `))
             console.log(chalk.yellow(`🌿Connected to => ` + JSON.stringify(XeonBotInc.user, null, 2)))
@@ -324,16 +306,7 @@ async function startXeonBotInc() {
             try {
                 const botNumber = XeonBotInc.user.id.split(':')[0] + '@s.whatsapp.net';
                 await XeonBotInc.sendMessage(botNumber, {
-                    text: `╔═══════════════════════════╗\n║    TUNZY MD CONNECTED    ║\n║      SUCCESSFULLY ✅      ║\n╚═══════════════════════════╝\n\n📊 *Status:* Online and Ready!\n🌟 *Special Connection Activated!*`,
-                    contextInfo: {
-                        forwardingScore: 1,
-                        isForwarded: true,
-                        forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363422591784062@newsletter',
-                            newsletterName: 'TUNZY-MD',
-                            serverMessageId: -1
-                        }
-                    }
+                    text: `Bot is active !`
                 });
             } catch (error) {
                 console.error('Error sending connection message:', error.message)
@@ -350,13 +323,13 @@ async function startXeonBotInc() {
             console.log(chalk.blue(`Bot Version: ${settings.version}`))
             console.log(chalk.cyan(`Auto-join: Enabled`))
         }
-        
+
         if (connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut
             const statusCode = lastDisconnect?.error?.output?.statusCode
-            
+
             console.log(chalk.red(`Connection closed due to ${lastDisconnect?.error}, reconnecting ${shouldReconnect}`))
-            
+
             if (statusCode === DisconnectReason.loggedOut || statusCode === 401) {
                 try {
                     rmSync('./session', { recursive: true, force: true })
@@ -366,7 +339,7 @@ async function startXeonBotInc() {
                 }
                 console.log(chalk.red('Session logged out. Please re-authenticate.'))
             }
-            
+
             if (shouldReconnect) {
                 console.log(chalk.yellow('Reconnecting...'))
                 await delay(5000)
@@ -375,42 +348,30 @@ async function startXeonBotInc() {
         }
     })
 
-    // Track recently-notified callers to avoid spamming messages
-    const antiCallNotified = new Set();
-
-    // Anticall handler: block callers when enabled
+    // SIMPLIFIED ANTICALL HANDLER - Only rejects calls, no messages, no blocking
     XeonBotInc.ev.on('call', async (calls) => {
         try {
             const { readState: readAnticallState } = require('./commands/anticall');
             const state = readAnticallState();
             if (!state.enabled) return;
+            
             for (const call of calls) {
                 const callerJid = call.from || call.peerJid || call.chatId;
                 if (!callerJid) continue;
+                
                 try {
-                    // First: attempt to reject the call if supported
-                    try {
-                        if (typeof XeonBotInc.rejectCall === 'function' && call.id) {
-                            await XeonBotInc.rejectCall(call.id, callerJid);
-                        } else if (typeof XeonBotInc.sendCallOfferAck === 'function' && call.id) {
-                            await XeonBotInc.sendCallOfferAck(call.id, callerJid, 'reject');
-                        }
-                    } catch {}
-
-                    // Notify the caller only once within a short window
-                    if (!antiCallNotified.has(callerJid)) {
-                        antiCallNotified.add(callerJid);
-                        setTimeout(() => antiCallNotified.delete(callerJid), 60000);
-                        await XeonBotInc.sendMessage(callerJid, { text: '📵 Anticall is enabled. Your call was rejected and you will be blocked.' });
+                    // Silently reject the call without sending any messages
+                    if (typeof XeonBotInc.rejectCall === 'function' && call.id) {
+                        await XeonBotInc.rejectCall(call.id, callerJid);
+                    } else if (typeof XeonBotInc.sendCallOfferAck === 'function' && call.id) {
+                        await XeonBotInc.sendCallOfferAck(call.id, callerJid, 'reject');
                     }
-                } catch {}
-                // Then: block after a short delay to ensure rejection and message are processed
-                setTimeout(async () => {
-                    try { await XeonBotInc.updateBlockStatus(callerJid, 'block'); } catch {}
-                }, 800);
+                } catch (error) {
+                    // Silently ignore any errors
+                }
             }
-        } catch (e) {
-            // ignore
+        } catch (error) {
+            // Silently ignore any errors
         }
     });
 
