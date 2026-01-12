@@ -216,22 +216,34 @@ ${readMore}
 ┗━━━━━━━━━━━━━━━━━━
     `;
 
-    // 2️⃣ Check if bot_picture.jpg exists
+    // Check if bot_picture.jpg exists
     const imagePath = path.join(__dirname, '../assets/bot_picture.jpg');
     
+    // Context info for forwarded appearance
+    const contextInfo = {
+        forwardingScore: 1,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+            newsletterJid: '120363422591784062@newsletter',
+            newsletterName: 'TUNZY-MD'
+        }
+    };
+    
     try {
-        // 3️⃣ Send image with caption if exists
+        // Send image with caption if exists
         if (fs.existsSync(imagePath)) {
-            // Send image with caption (removed jpegThumbnail for speed)
+            // Send image with caption (removed jpegThumbnail but kept contextInfo)
             await sock.sendMessage(chatId, {
                 image: { url: imagePath },
                 caption: caption.trim(),
-                mimetype: 'image/jpeg'
+                mimetype: 'image/jpeg',
+                contextInfo: contextInfo
             });
         } else {
             // Send only text if image doesn't exist
             await sock.sendMessage(chatId, {
-                text: caption
+                text: caption,
+                contextInfo: contextInfo
             });
         }
     } catch (error) {
@@ -239,6 +251,7 @@ ${readMore}
         // If image fails to send, try sending just the text
         await sock.sendMessage(chatId, {
             text: `⚠️ Failed to load image\n\n${caption}`,
+            contextInfo: contextInfo,
             quoted: message
         });
     }
