@@ -1,4 +1,6 @@
 const settings = require('../settings');
+const fs = require('fs');
+const path = require('path');
 
 async function helpCommandEdited(sock, chatId, message) {
     // Hidden "read more" to collapse WhatsApp message
@@ -14,228 +16,252 @@ async function helpCommandEdited(sock, chatId, message) {
     // 2️⃣ Delay for effect
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // 3️⃣ Full menu text
-    const helpMessage = `
-┏━━━━━━━━━━━━━━━━━━━━━━┓
+    // 3️⃣ Delete loading message
+    await sock.sendMessage(chatId, { delete: loadingMsg.key });
+
+    // 4️⃣ Check if bot_picture.jpg exists
+    const imagePath = path.join(__dirname, '../assets/images/bot_picture.jpg');
+    const caption = `
+┏━━━━━━━━━━━━━━━━━━━
 ┃ TUNZY-MD
-┃ Version : ${settings.version || '1.0.0'}
+┃ Version : 1.0.0
 ┃ Owner  : TUNZY SHOP
-┃ YouTube: ${global.ytch || 'Not Set'}
-┗━━━━━━━━━━━━━━━━━━━━━━┛
+┃ YouTube: Tunzy Shop
+┗━━━━━━━━━━━━━━━━━━━━
 ${readMore}
 
-╭━━〔 CORE COMMANDS 〕━━┈⊷
-│ .menu / .help
-│ .ping
-│ .alive
-│ .owner
-│ .jid
-│ .url
-│ .tts <text>
-│ .joke
-│ .quote
-│ .fact
-│ .news
-│ .weather <city>
-│ .lyrics <song>
-│ .8ball <question>
-│ .groupinfo
-│ .admins / .staff
-│ .vv
-│ .trt <text> <lang>
-│ .ss <link>
-│ .attp <text>
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━━━━━━[CORE]━━━━━━━
+┃ .menu / .help
+┃ .ping
+┃ .alive
+┃ .owner
+┃ .jid
+┃ .url
+┃ .tts <text>
+┃ .joke
+┃ .quote
+┃ .fact
+┃ .news
+┃ .weather <city>
+┃ .lyrics <song>
+┃ .8ball <question>
+┃ .groupinfo
+┃ .admins / .staff
+┃ .vv
+┃ .trt <text> <lang>
+┃ .ss <link>
+┃ .attp <text>
+┗━━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 GROUP ADMINISTRATION 〕━━┈⊷
-│ .ban
-│ .kick
-│ .mute / .unmute
-│ .promote / .demote
-│ .del
-│ .warn
-│ .warnings
-│ .clear
-│ .tag
-│ .tagall
-│ .tagnotadmin
-│ .hidetag
-│ .antilink
-│ .antibadword
-│ .antitag
-│ .chatbot
-│ .welcome
-│ .goodbye
-│ .resetlink
-│ .setgname <name>
-│ .setgdesc <desc>
-│ .setgpp
-│ .accept all
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━━[GROUP ADMIN]━━━━━
+┃ .ban
+┃ .kick
+┃ .mute / .unmute
+┃ .promote / .demote
+┃ .del
+┃ .warn
+┃ .warnings
+┃ .clear
+┃ .tag
+┃ .tagall
+┃ .tagnotadmin
+┃ .hidetag
+┃ .antilink
+┃ .antibadword
+┃ .antitag
+┃ .chatbot
+┃ .welcome
+┃ .goodbye
+┃ .resetlink
+┃ .setgname <name>
+┃ .setgdesc <desc>
+┃ .setgpp
+┃ .accept all
+┗━━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 OWNER CONTROL PANEL 〕━━┈⊷
-│ .mode <public/self>
-│ .update
-│ .settings
-│ .clearsession
-│ .cleartmp
-│ .antidelete
-│ .anticall
-│ .setpp <reply image>
-│ .setmention <reply msg>
-│ .mention
-│ .autoread
-│ .autoreact
-│ .autotyping
-│ .autostatus
-│ .autostatus react
-│ .pmblocker
-│ .pmblocker setmsg
-│ .savestatus
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━━[OWNER CONTROL]━━━━
+┃ .mode <public/self>
+┃ .update
+┃ .settings
+┃ .clearsession
+┃ .cleartmp
+┃ .antidelete
+┃ .anticall
+┃ .setpp <reply image>
+┃ .setmention <reply msg>
+┃ .mention
+┃ .autoread
+┃ .autoreact
+┃ .autotyping
+┃ .autostatus
+┃ .autostatus react
+┃ .pmblocker
+┃ .pmblocker setmsg
+┃ .savestatus
+┗━━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 MEDIA & STICKERS 〕━━┈⊷
-│ .sticker
-│ .tgsticker
-│ .simage <reply sticker>
-│ .blur <reply image>
-│ .crop
-│ .removebg
-│ .meme
-│ .take
-│ .emojimix
-│ .igs <insta link>
-│ .igsc <insta link>
-│ .hd <reply image>
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━[MEDIA/STICKERS]━━━━
+┃ .sticker
+┃ .tgsticker
+┃ .simage <reply sticker>
+┃ .blur <reply image>
+┃ .crop
+┃ .removebg
+┃ .meme
+┃ .take
+┃ .emojimix
+┃ .igs <insta link>
+┃ .igsc <insta link>
+┃ .hd <reply image>
+┗━━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 IMAGE SEARCH (PIES) 〕━━┈⊷
-│ .pies <country>
-│ .japan
-│ .korean
-│ .indonesia
-│ .china
-│ .hijab
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━[IMAGE SEARCH]━━━━━
+┃ .pies <country>
+┃ .japan
+┃ .korean
+┃ .indonesia
+┃ .china
+┃ .hijab
+┗━━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 GAMES & ENTERTAINMENT 〕━━┈⊷
-│ .tictactoe @user
-│ .hangman
-│ .guess <letter>
-│ .trivia
-│ .answer <answer>
-│ .truth
-│ .dare
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━━━━━[GAMES]━━━━━━━
+┃ .tictactoe @user
+┃ .hangman
+┃ .guess <letter>
+┃ .trivia
+┃ .answer <answer>
+┃ .truth
+┃ .dare
+┗━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 AI INTELLIGENCE HUB 〕━━┈⊷
-│ .gpt <question>
-│ .gemini <question>
-│ .imagine <prompt>
-│ .flux <prompt>
-│ .sora <prompt>
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━[AI INTELLIGENCE]━━━
+┃ .gpt <question>
+┃ .gemini <question>
+┃ .imagine <prompt>
+┃ .flux <prompt>
+┃ .sora <prompt>
+┗━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 SOURCE & REPOSITORY 〕━━┈⊷
-│ .git
-│ .github
-│ .repo
-│ .sc
-│ .script
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━[SOURCES/REPO]━━━━━
+┃ .git
+┃ .github
+┃ .repo
+┃ .sc
+┃ .script
+┗━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 REACTIONS & EMOTES 〕━━┈⊷
-│ .nom
-│ .poke
-│ .cry
-│ .kiss
-│ .pat
-│ .hug
-│ .wink
-│ .facepalm
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━━━[REACTION]━━━━━━
+┃ .nom
+┃ .poke
+┃ .cry
+┃ .kiss
+┃ .pat
+┃ .hug
+┃ .wink
+┃ .facepalm
+┗━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 EFFECTS & GENERATORS 〕━━┈⊷
-│ .heart
-│ .horny
-│ .lgbt
-│ .circle
-│ .lolice
-│ .its-so-stupid
-│ .namecard
-│ .oogway
-│ .tweet
-│ .ytcomment
-│ .comrade
-│ .gay
-│ .glass
-│ .jail
-│ .passed
-│ .triggered
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━━━━[EFFECTS]━━━━━
+┃ .heart
+┃ .horny
+┃ .lgbt
+┃ .circle
+┃ .lolice
+┃ .its-so-stupid
+┃ .namecard
+┃ .oogway
+┃ .tweet
+┃ .ytcomment
+┃ .comrade
+┃ .gay
+┃ .glass
+┃ .jail
+┃ .passed
+┃ .triggered
+┗━━━━━━━━━━━━━━━━━━
 
-╭━━〔 FUN & SOCIAL 〕━━┈⊷
-│ .compliment @user
-│ .insult @user
-│ .flirt
-│ .shayari
-│ .goodnight
-│ .roseday
-│ .character @user
-│ .wasted @user
-│ .ship @user
-│ .simp @user
-│ .stupid @user <text>
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━[FUN / SOCIAL]━━━
+┃ .compliment @user
+┃ .insult @user
+┃ .flirt
+┃ .shayari
+┃ .goodnight
+┃ .roseday
+┃ .character @user
+┃ .wasted @user
+┃ .ship @user
+┃ .simp @user
+┃ .stupid @user <text>
+┗━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 TEXT DESIGNER 〕━━┈⊷
-│ .metalic
-│ .ice
-│ .snow
-│ .impressive
-│ .matrix
-│ .light
-│ .neon
-│ .devil
-│ .purple
-│ .thunder
-│ .hacker
-│ .sand
-│ .leaves
-│ .1917
-│ .arena
-│ .blackpink
-│ .glitch
-│ .fire
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━━━[TEXT DESIGN]━━━━
+┃ .metalic
+┃ .ice
+┃ .snow
+┃ .impressive
+┃ .matrix
+┃ .light
+┃ .neon
+┃ .devil
+┃ .purple
+┃ .thunder
+┃ .hacker
+┃ .sand
+┃ .leaves
+┃ .1917
+┃ .arena
+┃ .blackpink
+┃ .glitch
+┃ .fire
+┗━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 MEDIA DOWNLOADS 〕━━┈⊷
-│ .song <name>
-│ .play <name>
-│ .spotify <name>
-│ .video <name>
-│ .instagram <link>
-│ .facebook <link>
-│ .tiktok <link>
-╰━━━━━━━━━━━━━━━━━┈⊷
+┏━━[MEDIA DOWNLOAD]━━━
+┃ .song <name>
+┃ .play <name>
+┃ .spotify <name>
+┃ .video <name>
+┃ .instagram <link>
+┃ .facebook <link>
+┃ .tiktok <link>
+┗━━━━━━━━━━━━━━━━━━━
 
-╭━━〔 SYSTEM UPDATES 〕━━┈⊷
-│ Join Official Channel 👇👇
-╰━━━━━━━━━━━━━━━━━┈⊷
-`;
+┏━[SYSTEM UPDATE]━━━━
+┃ Join Official Channel 👇
+┗━━━━━━━━━━━━━━━━━━
+    `;
 
-    // 4️⃣ Send the menu as a forwarded message from your channel
-    await sock.sendMessage(chatId, { 
-        text: helpMessage,
-        contextInfo: {
-            forwardingScore: 1,
-            isForwarded: true,
-            forwardedNewsletterMessageInfo: {
-                newsletterJid: '120363422591784062@newsletter', // your channel JID
-                newsletterName: 'TUNZY-MD'            // display name
+    // 5️⃣ Send image with caption if exists
+    if (fs.existsSync(imagePath)) {
+        // Send HD image with caption
+        await sock.sendMessage(chatId, {
+            image: { url: imagePath },
+            caption: caption,
+            mimetype: 'image/jpeg',
+            // HD quality settings
+            jpegThumbnail: fs.readFileSync(imagePath),
+            contextInfo: {
+                forwardingScore: 1,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363422591784062@newsletter',
+                    newsletterName: 'TUNZY-MD'
+                }
             }
-        }
-    });
+        });
+    } else {
+        // Send only text if image doesn't exist
+        await sock.sendMessage(chatId, {
+            text: caption,
+            contextInfo: {
+                forwardingScore: 1,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363422591784062@newsletter',
+                    newsletterName: 'TUNZY-MD'
+                }
+            }
+        });
+    }
 }
 
 module.exports = helpCommandEdited;
