@@ -1,7 +1,5 @@
 const axios = require('axios');
 const yts = require('yt-search');
-const fs = require('fs');
-const path = require('path');
 
 const AXIOS_DEFAULTS = {
     timeout: 60000,
@@ -11,200 +9,279 @@ const AXIOS_DEFAULTS = {
     }
 };
 
-async function tryRequest(getter, attempts = 3) {
-    let lastError;
-    for (let attempt = 1; attempt <= attempts; attempt++) {
-        try {
-            return await getter();
-        } catch (err) {
-            lastError = err;
-            if (attempt < attempts) {
-                await new Promise(r => setTimeout(r, 1000 * attempt));
+// Multiple download APIs for fallback
+const DOWNLOAD_APIS = [
+    {
+        name: 'Apis-Keith',
+        url: (videoUrl) => `https://apis-keith.vercel.app/download/dlmp3?url=${encodeURIComponent(videoUrl)}`,
+        extractor: (data) => {
+            if (data?.result?.downloadUrl) {
+                return {
+                    download: data.result.downloadUrl,
+                    title: data.result.title,
+                    thumbnail: data.result.thumbnail
+                };
             }
+            return null;
         }
-    }
-    throw lastError;
-}
-
-async function getIzumiDownloadByUrl(youtubeUrl) {
-    try {
-        const apiUrl = `https://izumiiiiiiii.dpdns.org/downloader/youtube?url=${encodeURIComponent(youtubeUrl)}&format=mp3`;
-        const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
-        if (res?.data?.result?.download) return res.data.result;
-        if (res?.data?.download) return res.data;
-        throw new Error('Izumi youtube?url returned no download');
-    } catch (error) {
-        console.error('Izumi URL error:', error.message);
-        throw error;
-    }
-}
-
-async function getIzumiDownloadByQuery(query) {
-    try {
-        const apiUrl = `https://izumiiiiiiii.dpdns.org/downloader/youtube-play?query=${encodeURIComponent(query)}`;
-        const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
-        if (res?.data?.result?.download) return res.data.result;
-        if (res?.data?.download) return res.data;
-        throw new Error('Izumi youtube-play returned no download');
-    } catch (error) {
-        console.error('Izumi query error:', error.message);
-        throw error;
-    }
-}
-
-async function getOkatsuDownloadByUrl(youtubeUrl) {
-    try {
-        const apiUrl = `https://okatsu-rolezapiiz.vercel.app/downloader/ytmp3?url=${encodeURIComponent(youtubeUrl)}`;
-        const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
-        if (res?.data?.dl) {
-            return {
-                download: res.data.dl,
-                title: res.data.title,
-                thumbnail: res.data.thumb
-            };
+    },
+    {
+        name: 'Y2Mate',
+        url: (videoUrl) => `https://api.y2mate.guru/convert?url=${encodeURIComponent(videoUrl)}`,
+        extractor: (data) => {
+            if (data?.urls?.mp3?.url) {
+                return {
+                    download: data.urls.mp3.url,
+                    title: data.title || 'Unknown Title',
+                    thumbnail: data.thumbnail
+                };
+            }
+            return null;
         }
-        throw new Error('Okatsu ytmp3 returned no download');
-    } catch (error) {
-        console.error('Okatsu error:', error.message);
-        throw error;
-    }
-}
-
-// NEW: Additional fallback API
-async function getY2MateDownload(query) {
-    try {
-        const apiUrl = `https://api.y2mate.guru/convert?url=${encodeURIComponent(query)}`;
-        const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
-        
-        if (res?.data?.urls?.mp3?.url) {
-            return {
-                download: res.data.urls.mp3.url,
-                title: res.data.title || 'Unknown Title',
-                thumbnail: res.data.thumbnail
-            };
+    },
+    {
+        name: 'Izumi-URL',
+        url: (videoUrl) => `https://izumiiiiiiii.dpdns.org/downloader/youtube?url=${encodeURIComponent(videoUrl)}&format=mp3`,
+        extractor: (data) => {
+            if (data?.result?.download) return data.result;
+            if (data?.download) return data;
+            return null;
         }
-        throw new Error('Y2Mate returned no download');
-    } catch (error) {
-        console.error('Y2Mate error:', error.message);
-        throw error;
+    },
+    {
+        name: 'Okatsu',
+        url: (videoUrl) => `https://okatsu-rolezapiiz.vercel.app/downloader/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+        extractor: (data) => {
+            if (data?.dl) {
+                return {
+                    download: data.dl,
+                    title: data.title,
+                    thumbnail: data.thumb
+                };
+            }
+            return null;
+        }
+    },
+    {
+        name: 'Izumi-Query',
+        url: (query) => `https://izumiiiiiiii.dpdns.org/downloader/youtube-play?query=${encodeURIComponent(query)}`,
+        extractor: (data) => {
+            if (data?.result?.download) return data.result;
+            if (data?.download) return data;
+            return null;
+        },
+        needsVideoId: false
+    }
+];
+
+async function tryRequest(url, isQuery = false) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            const response = await axios.get(url, AXIOS_DEFAULTS);
+            return response.data;
+        } catch (error) {
+            if (attempt === 3) throw error;
+            await new Promise(r => setTimeout(r, 1000 * attempt));
+        }
     }
 }
 
-async function songCommand(sock, chatId, message) {
+async function searchAndDownload(sock, chatId, message, query) {
     try {
-        const text = message.message?.conversation || 
-                     message.message?.extendedTextMessage?.text || 
-                     message.message?.imageMessage?.caption || 
-                     '';
-        
-        if (!text.trim()) {
-            await sock.sendMessage(chatId, { text: 'Usage: .song <song name or YouTube link>' }, { quoted: message });
-            return;
-        }
-
-        // Extract command if present
-        const query = text.replace(/^\.song\s*/i, '').trim();
-        if (!query) {
-            await sock.sendMessage(chatId, { text: 'Please provide a song name or YouTube link.\nExample: .song Shape of You' }, { quoted: message });
-            return;
-        }
+        // Show searching message
+        await sock.sendMessage(chatId, {
+            react: { text: "⏳", key: message.key }
+        });
 
         let video;
         let isYoutubeUrl = false;
         
-        if (query.includes('youtube.com') || query.includes('youtu.be')) {
+        // Check if input is a YouTube URL
+        if (query.includes('youtube.com/watch?v=') || query.includes('youtu.be/')) {
             isYoutubeUrl = true;
-            video = { url: query };
-            // Try to get video info
-            try {
-                const search = await yts({ videoId: extractVideoId(query) });
-                if (search) {
-                    video = {
-                        url: query,
-                        title: search.title || 'Unknown Title',
-                        thumbnail: search.thumbnail || '',
-                        timestamp: search.timestamp || 'N/A'
-                    };
-                }
-            } catch (e) {
-                console.log('Could not get video info, using basic URL');
+            const videoId = extractVideoId(query);
+            if (!videoId) {
+                throw new Error('Invalid YouTube URL');
             }
+            
+            // Get video info
+            const search = await yts({ videoId });
+            if (!search) {
+                throw new Error('Could not fetch video information');
+            }
+            
+            video = {
+                url: `https://www.youtube.com/watch?v=${videoId}`,
+                title: search.title,
+                thumbnail: search.thumbnail,
+                timestamp: search.timestamp || 'N/A',
+                duration: search.duration?.seconds || 0
+            };
         } else {
-            try {
-                await sock.sendMessage(chatId, { 
-                    text: `🔍 Searching for: *${query}*...` 
-                }, { quoted: message });
-                
-                const search = await yts(query);
-                if (!search || !search.videos || search.videos.length === 0) {
-                    await sock.sendMessage(chatId, { text: '❌ No results found.' }, { quoted: message });
-                    return;
-                }
-                video = search.videos[0];
-            } catch (searchError) {
-                console.error('Search error:', searchError);
-                await sock.sendMessage(chatId, { text: '❌ Failed to search for the song.' }, { quoted: message });
-                return;
+            // Search by query
+            const searchResults = await yts(query);
+            if (!searchResults.videos || searchResults.videos.length === 0) {
+                throw new Error('No results found');
             }
+            
+            video = searchResults.videos[0];
         }
 
-        // Inform user
+        // Show video info
         await sock.sendMessage(chatId, {
-            image: { url: video.thumbnail || 'https://via.placeholder.com/300x200/1e40af/ffffff?text=Loading...' },
-            caption: `🎵 *${video.title || 'Song'}*\n⏱ Duration: ${video.timestamp || 'Unknown'}\n📥 Downloading...`
-        }, { quoted: message });
+            image: { url: video.thumbnail },
+            caption: `🎵 *${video.title}*\n⏱ Duration: ${video.timestamp}\n🔍 Searching for download...`,
+            contextInfo: {
+                externalAdReply: {
+                    title: video.title.substring(0, 60),
+                    body: "🎵 Audio Download",
+                    mediaType: 2,
+                    thumbnailUrl: video.thumbnail,
+                    sourceUrl: video.url,
+                    mediaUrl: video.url,
+                    showAdAttribution: true
+                }
+            }
+        });
 
-        // Try multiple download sources
-        let audioData;
-        const sources = [
-            { name: 'Izumi URL', func: () => getIzumiDownloadByUrl(video.url) },
-            { name: 'Y2Mate', func: () => getY2MateDownload(video.url || query) },
-            { name: 'Izumi Query', func: () => getIzumiDownloadByQuery(video.title || query) },
-            { name: 'Okatsu', func: () => getOkatsuDownloadByUrl(video.url) }
-        ];
-
-        for (const source of sources) {
+        // Try different download APIs
+        let audioData = null;
+        let workingApi = null;
+        
+        for (const api of DOWNLOAD_APIS) {
             try {
-                console.log(`Trying ${source.name}...`);
-                audioData = await source.func();
-                if (audioData && (audioData.download || audioData.dl || audioData.url)) {
-                    console.log(`Success with ${source.name}`);
+                console.log(`Trying ${api.name}...`);
+                
+                const url = api.needsVideoId === false && !isYoutubeUrl 
+                    ? api.url(query)
+                    : api.url(video.url);
+                
+                const data = await tryRequest(url);
+                audioData = api.extractor(data);
+                
+                if (audioData && audioData.download) {
+                    workingApi = api.name;
+                    console.log(`✅ Success with ${api.name}`);
                     break;
                 }
-            } catch (error) {
-                console.log(`${source.name} failed:`, error.message);
+            } catch (apiError) {
+                console.log(`❌ ${api.name} failed:`, apiError.message);
                 continue;
             }
         }
 
-        if (!audioData || (!audioData.download && !audioData.dl && !audioData.url)) {
+        if (!audioData || !audioData.download) {
             throw new Error('All download sources failed');
         }
 
-        // Send the audio
-        const downloadUrl = audioData.download || audioData.dl || audioData.url;
-        const fileName = `${(audioData.title || video.title || 'song').replace(/[<>:"/\\|?*]/g, '_')}.mp3`;
+        // Update reaction
+        await sock.sendMessage(chatId, {
+            react: { text: "✅", key: message.key }
+        });
+
+        // Send audio
+        const fileName = `${(audioData.title || video.title).replace(/[<>:"/\\|?*]/g, '_').substring(0, 100)}.mp3`;
         
         await sock.sendMessage(chatId, {
-            audio: { url: downloadUrl },
+            audio: { url: audioData.download },
             mimetype: 'audio/mpeg',
             fileName: fileName,
-            ptt: false
+            contextInfo: {
+                externalAdReply: {
+                    title: (audioData.title || video.title).substring(0, 60),
+                    body: `via ${workingApi}`,
+                    mediaType: 1,
+                    thumbnailUrl: audioData.thumbnail || video.thumbnail,
+                    sourceUrl: video.url,
+                    mediaUrl: video.url,
+                    showAdAttribution: true
+                }
+            }
         }, { quoted: message });
 
-    } catch (err) {
-        console.error('Song command error:', err);
-        await sock.sendMessage(chatId, { 
-            text: `❌ Failed to download song.\nError: ${err.message || 'Unknown error'}\n\nPlease try:\n1. A different song name\n2. Direct YouTube link\n3. Try again later` 
-        }, { quoted: message });
+        // Clear reaction after delay
+        setTimeout(async () => {
+            try {
+                await sock.sendMessage(chatId, {
+                    react: { text: "", key: message.key }
+                });
+            } catch (e) {
+                // Ignore
+            }
+        }, 3000);
+
+    } catch (error) {
+        console.error('Download error:', error);
+        
+        // Clear reaction
+        try {
+            await sock.sendMessage(chatId, {
+                react: { text: "", key: message.key }
+            });
+        } catch (e) {
+            // Ignore
+        }
+        
+        // Send error message
+        let errorMsg = `❌ Download failed: ${error.message}`;
+        
+        if (error.message.includes('No results found')) {
+            errorMsg = '❌ No songs found. Please try a different search.';
+        } else if (error.message.includes('All download sources failed')) {
+            errorMsg = '❌ All download services are currently unavailable. Please try again later.';
+        } else if (error.message.includes('Invalid YouTube URL')) {
+            errorMsg = '❌ Invalid YouTube URL. Please provide a valid link.';
+        }
+        
+        await sock.sendMessage(chatId, { text: errorMsg }, { quoted: message });
     }
 }
 
-// Helper function to extract YouTube video ID
+// Extract YouTube video ID
 function extractVideoId(url) {
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : null;
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/v\/([a-zA-Z0-9_-]{11})/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+    return null;
 }
 
-module.exports = songCommand;
+// Unified command handler
+async function mediaDownloadCommand(sock, chatId, message, args, command) {
+    const text = message.message?.conversation || 
+                 message.message?.extendedTextMessage?.text || '';
+    
+    // Extract query (remove command prefix)
+    const query = text.replace(/^\.(song|play|music)\s*/i, '').trim();
+    
+    if (!query) {
+        return await sock.sendMessage(chatId, {
+            text: `Usage: .${command} <song name or YouTube link>\nExample: .${command} shape of you\nExample: .${command} https://youtu.be/dQw4w9WgXcQ`
+        }, { quoted: message });
+    }
+    
+    await searchAndDownload(sock, chatId, message, query);
+}
+
+// For backward compatibility
+async function songCommand(sock, chatId, message) {
+    await mediaDownloadCommand(sock, chatId, message, null, 'song');
+}
+
+async function playCommand(sock, chatId, message, jid) {
+    await mediaDownloadCommand(sock, chatId, message, null, 'play');
+}
+
+module.exports = {
+    songCommand,
+    playCommand,
+    mediaDownloadCommand  // Unified handler
+};
