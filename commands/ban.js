@@ -11,15 +11,13 @@ async function banCommand(sock, chatId, message) {
         const { isSenderAdmin, isBotAdmin } = await isAdmin(sock, chatId, senderId);
         if (!isBotAdmin) {
             await sock.sendMessage(chatId, { 
-                text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *❌ BOT NOT ADMIN*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nMake bot admin to use ban command.",
-                ...channelInfo 
+                text: "Bot needs to be admin to use this command.",
             }, { quoted: message });
             return;
         }
         if (!isSenderAdmin && !message.key.fromMe) {
             await sock.sendMessage(chatId, { 
-                text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *⛔ PERMISSION DENIED*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nOnly group admins can ban users.",
-                ...channelInfo 
+                text: "Only group admins can ban users.",
             }, { quoted: message });
             return;
         }
@@ -28,15 +26,14 @@ async function banCommand(sock, chatId, message) {
         const senderIsSudo = await isSudo(senderId);
         if (!message.key.fromMe && !senderIsSudo) {
             await sock.sendMessage(chatId, { 
-                text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *👑 OWNER ONLY*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nOnly bot owner can ban in private chat.",
-                ...channelInfo 
+                text: "Only bot owner can ban in private chat.",
             }, { quoted: message });
             return;
         }
     }
-    
+
     let userToBan;
-    
+
     // Check for mentioned users
     if (message.message?.extendedTextMessage?.contextInfo?.mentionedJid?.length > 0) {
         userToBan = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
@@ -45,11 +42,10 @@ async function banCommand(sock, chatId, message) {
     else if (message.message?.extendedTextMessage?.contextInfo?.participant) {
         userToBan = message.message.extendedTextMessage.contextInfo.participant;
     }
-    
+
     if (!userToBan) {
         await sock.sendMessage(chatId, { 
-            text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *📛 BAN COMMAND*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n*Usage:*\n`.ban @user` - Ban mentioned user\n`.ban` (reply to user) - Ban replied user",
-            ...channelInfo 
+            text: "*Ban Command*\n\nUsage:\n`.ban @user` - Ban mentioned user\n`.ban` (reply to user) - Ban replied user",
         });
         return;
     }
@@ -59,8 +55,7 @@ async function banCommand(sock, chatId, message) {
         const botId = sock.user.id.split(':')[0] + '@s.whatsapp.net';
         if (userToBan === botId || userToBan === botId.replace('@s.whatsapp.net', '@lid')) {
             await sock.sendMessage(chatId, { 
-                text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *❌ CANNOT BAN*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nYou cannot ban the bot account.",
-                ...channelInfo 
+                text: "You cannot ban the bot account.",
             }, { quoted: message });
             return;
         }
@@ -72,29 +67,26 @@ async function banCommand(sock, chatId, message) {
         if (!bannedUsers.includes(userToBan)) {
             bannedUsers.push(userToBan);
             fs.writeFileSync('./data/banned.json', JSON.stringify(bannedUsers, null, 2));
-            
+
             // Get user info
             const userInfo = await sock.onWhatsApp(userToBan);
             const userName = userInfo[0]?.name || userToBan.split('@')[0];
-            
+
             await sock.sendMessage(chatId, { 
-                text: `╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *✅ USER BANNED*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n👤 *User:* ${userName}\n📱 *ID:* ${userToBan.split('@')[0]}\n⏰ *Time:* ${new Date().toLocaleTimeString()}\n\nUser can no longer use bot commands.`,
+                text: `_@${userName} have been banned from using bot_`,
                 mentions: [userToBan],
-                ...channelInfo 
-            });
+            }, { quoted: message });
         } else {
             await sock.sendMessage(chatId, { 
-                text: `╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *⚠️ ALREADY BANNED*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n${userToBan.split('@')[0]} is already banned!`,
+                text: `_@${userToBan.split('@')[0]} is already banned!_`,
                 mentions: [userToBan],
-                ...channelInfo 
-            });
+            }, { quoted: message });
         }
     } catch (error) {
         console.error('Error in ban command:', error);
         await sock.sendMessage(chatId, { 
-            text: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *❌ BAN FAILED*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nFailed to ban user!",
-            ...channelInfo 
-        });
+            text: "Failed to ban user!",
+        }, { quoted: message });
     }
 }
 
