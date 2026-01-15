@@ -57,7 +57,7 @@ async function githubCommand(sock, chatId, message) {
     
     // Try to send without image if image loading fails
     try {
-      const res = await fetch('https://api.github.com/repos/tunzy-shop/TUNZY-MD');
+      const res = await fetch('https://api.github.com/repos/tunzy-shop/TUNZY-MD/fork');
       if (res.ok) {
         const json = await res.json();
         let txt = `*乂  TUNZY - MD 乂*\n\n`;
