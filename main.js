@@ -146,8 +146,8 @@ const soraCommand = require('./commands/sora');
 // Global settings
 global.packname = settings.packname;
 global.author = settings.author;
-global.channelLink = "https://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A";
-global.ytch = "Mr Unique Hacker";
+global.channelLink = "https://whatsapp.com/channel/0029Vb70IdY60eBmvtGRT00R";
+global.ytch = "Tunzy Shop";
 
 // Add this near the top of main.js with other global configurations
 const channelInfo = {
@@ -155,8 +155,8 @@ const channelInfo = {
         forwardingScore: 1,
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
-            newsletterJid: '120363161513685998@newsletter',
-            newsletterName: 'KnightBot MD',
+            newsletterJid: '120363422591784062@newsletter',
+            newsletterName: 'TUNZY-MD',
             serverMessageId: -1
         }
     }
@@ -194,10 +194,10 @@ async function handleMessages(sock, messageUpdate, printLog) {
         if (message.message?.buttonsResponseMessage) {
             const buttonId = message.message.buttonsResponseMessage.selectedButtonId;
             const chatId = message.key.remoteJid;
-
+            
             if (buttonId === 'channel') {
-                await sock.sendMessage(chatId, {
-                    text: '📢 *Join our Channel:*\nhttps://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A'
+                await sock.sendMessage(chatId, { 
+                    text: '📢 *Join our Channel:*\https://whatsapp.com/channel/0029Vb70IdY60eBmvtGRT00R' 
                 }, { quoted: message });
                 return;
             } else if (buttonId === 'owner') {
@@ -205,19 +205,14 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await ownerCommand(sock, chatId);
                 return;
             } else if (buttonId === 'support') {
-                await sock.sendMessage(chatId, {
-                    text: `🔗 *Support*\n\nhttps://chat.whatsapp.com/GA4WrOFythU6g3BFVubYM7?mode=wwt`
+                await sock.sendMessage(chatId, { 
+                    text: `🔗 *Support*\n\nhttps://https://chat.whatsapp.com/EgWYHIPowuS1wv54JII6Ff?mode=hqrc` 
                 }, { quoted: message });
                 return;
             }
         }
 
         const userMessage = (
-            message.message?.conversation?.trim() ||
-            message.message?.extendedTextMessage?.text?.trim() ||
-            message.message?.imageMessage?.caption?.trim() ||
-            message.message?.videoMessage?.caption?.trim() ||
-            message.message?.buttonsResponseMessage?.selectedButtonId?.trim() ||
             ''
         ).toLowerCase().replace(/\.\s+/g, '.').trim();
 
