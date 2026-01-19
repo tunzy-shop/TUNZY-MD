@@ -147,8 +147,6 @@ const { anticallCommand, readState: readAnticallState } = require('./commands/an
 const { pmblockerCommand, readState: readPmBlockerState } = require('./commands/pmblocker');
 const settingsCommand = require('./commands/settings');
 const soraCommand = require('./commands/sora');
-// Add this line with the other command imports
-const freefireSensitivityCommand = require('./commands/freefireesensi');
 
 // Global settings
 global.packname = settings.packname;
@@ -400,11 +398,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await pairCommand(sock, chatId, message, pairArgs);
                 commandExecuted = true;
                 break;
-                // Add this case in the switch statement - find a good place to add it
-case userMessage.startsWith('.freefireesensi'):
-    await freefireSensitivityCommand(sock, chatId, message, userMessage);
-    commandExecuted = true;
-    break;
 
             // === EXISTING COMMANDS ===
             case userMessage === '.simage': {
