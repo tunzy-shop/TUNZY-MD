@@ -41,6 +41,7 @@ const { autotypingCommand, isAutotypingEnabled, handleAutotypingForMessage, hand
 const { autoreadCommand, isAutoreadEnabled, handleAutoread } = require('./commands/autoread');
 
 // Command imports
+const freefireSensitivityCommand = require('./commands/freefireesensi');
 const savestatusCommand = require('./commands/savestatus');
 const unpairCommand = require('./commands/unpair');
 const autojoinCommand = require('./commands/autojoin');
@@ -153,6 +154,12 @@ global.packname = settings.packname;
 global.author = settings.author;
 global.channelLink = "https://whatsapp.com/channel/0029Vb70IdY60eBmvtGRT00R";
 global.ytch = "Tunzy Shop";
+
+// Add this case in the switch statement
+case userMessage.startsWith('.freefireesensi'):
+    await freefireSensitivityCommand(sock, chatId, message, userMessage);
+    commandExecuted = true;
+    break;
 
 // Add this near the top of main.js with other global configurations
 const channelInfo = {
