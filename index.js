@@ -99,8 +99,7 @@ async function autoJoinCommunity(sock) {
             const defaultConfig = {
                 enabled: true,
                 channel: "120363422591784062@newsletter",
-                welcomeMessage: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃*WELCOME TO TUNZY-MD*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n✅ *Auto-joined to our community!*\n\n📢 *Channel:* TUNZY-MD Updates\n👥 *Support:* Contact owner\n\nUse .help for commands menu!
-*Update :* Use .update to get the latest version (if u are using bot hosting go to the panel and on it back !"
+                welcomeMessage: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *🤖 WELCOME TO TUNZY-MD*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n✅ *Auto-joined to our community!*\n\n📢 *Channel:* TUNZY-MD Updates\n👥 *Support:* Contact owner\n\nUse .help for commands menu!"
             };
             fs.writeFileSync(autojoinPath, JSON.stringify(defaultConfig, null, 2));
         }
@@ -114,7 +113,7 @@ async function autoJoinCommunity(sock) {
         try {
             const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
             await sock.sendMessage(botNumber, {
-                text: config.welcomeMessage || "Bot connected successfully!",
+                text: config.welcomeMessage || "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *🤖 WELCOME TO TUNZY-MD*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nBot connected successfully!\nUse .help for commands.",
                 contextInfo: {
                     forwardingScore: 1,
                     isForwarded: true,
@@ -363,32 +362,42 @@ async function startXeonBotInc() {
         }
     })
 
-    // Anticall handler: reject calls when enabled (without sending messages)
+    // Track recently-notified callers to avoid spamming messages
+    const antiCallNotified = new Set();
+
+    // Anticall handler: block callers when enabled
     XeonBotInc.ev.on('call', async (calls) => {
         try {
             const { readState: readAnticallState } = require('./commands/anticall');
             const state = readAnticallState();
             if (!state.enabled) return;
-            
             for (const call of calls) {
                 const callerJid = call.from || call.peerJid || call.chatId;
                 if (!callerJid) continue;
-                
                 try {
-                    // Attempt to reject the call if supported
-                    if (typeof XeonBotInc.rejectCall === 'function' && call.id) {
-                        await XeonBotInc.rejectCall(call.id, callerJid);
-                    } else if (typeof XeonBotInc.sendCallOfferAck === 'function' && call.id) {
-                        await XeonBotInc.sendCallOfferAck(call.id, callerJid, 'reject');
+                    // First: attempt to reject the call if supported
+                    try {
+                        if (typeof XeonBotInc.rejectCall === 'function' && call.id) {
+                            await XeonBotInc.rejectCall(call.id, callerJid);
+                        } else if (typeof XeonBotInc.sendCallOfferAck === 'function' && call.id) {
+                            await XeonBotInc.sendCallOfferAck(call.id, callerJid, 'reject');
+                        }
+                    } catch {}
+
+                    // Notify the caller only once within a short window
+                    if (!antiCallNotified.has(callerJid)) {
+                        antiCallNotified.add(callerJid);
+                        setTimeout(() => antiCallNotified.delete(callerJid), 60000);
+                        await XeonBotInc.sendMessage(callerJid, { text: '📵 Anticall is enabled. Your call was rejected and you will be blocked.' });
                     }
-                } catch (error) {
-                    // Silently ignore any errors in call rejection
-                    console.error('Error rejecting call:', error.message);
-                }
+                } catch {}
+                // Then: block after a short delay to ensure rejection and message are processed
+                setTimeout(async () => {
+                    try { await XeonBotInc.updateBlockStatus(callerJid, 'block'); } catch {}
+                }, 800);
             }
-        } catch (error) {
-            // Silently ignore any errors in anticall handler
-            console.error('Error in anticall handler:', error.message);
+        } catch (e) {
+            // ignore
         }
     });
 
