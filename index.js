@@ -99,7 +99,8 @@ async function autoJoinCommunity(sock) {
             const defaultConfig = {
                 enabled: true,
                 channel: "120363422591784062@newsletter",
-                welcomeMessage: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *🤖 WELCOME TO TUNZY-MD*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n✅ *Auto-joined to our community!*\n\n📢 *Channel:* TUNZY-MD Updates\n👥 *Support:* Contact owner\n\nUse .help for commands menu!"
+                welcomeMessage: "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃*WELCOME TO TUNZY-MD*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\n✅ *Auto-joined to our community!*\n\n📢 *Channel:* TUNZY-MD Updates\n👥 *Support:* Contact owner\n\nUse .help for commands menu!
+*Update :* Use .update to get the latest version (if u are using bot hosting go to the panel and on it back !"
             };
             fs.writeFileSync(autojoinPath, JSON.stringify(defaultConfig, null, 2));
         }
@@ -113,7 +114,7 @@ async function autoJoinCommunity(sock) {
         try {
             const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
             await sock.sendMessage(botNumber, {
-                text: config.welcomeMessage || "╭━━━━━━━━━━━━━━━━━━┈⊷\n┃✮│➣ *🤖 WELCOME TO TUNZY-MD*\n╰━━━━━━━━━━━━━━━━━━┈⊷\n\nBot connected successfully!\nUse .help for commands.",
+                text: config.welcomeMessage || "Bot connected successfully!",
                 contextInfo: {
                     forwardingScore: 1,
                     isForwarded: true,
