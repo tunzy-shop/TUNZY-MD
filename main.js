@@ -382,6 +382,12 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 commandExecuted = true;
                 break;
 
+            case userMessage.startsWith('.freefiresensi'):
+            case userMessage.startsWith('.ffs'):
+                await freefiresensiCommand(sock, chatId, message);
+                commandExecuted = true;
+                break;
+
             case userMessage.startsWith('.unpair'):
                 const unpairArgs = rawText.slice(7).trim();
                 await unpairCommand(sock, chatId, message, unpairArgs);
