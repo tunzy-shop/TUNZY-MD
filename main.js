@@ -39,6 +39,9 @@ const { isSudo } = require('./lib/index');
 const isOwnerOrSudo = require('./lib/isOwner');
 const { autotypingCommand, isAutotypingEnabled, handleAutotypingForMessage, handleAutotypingForCommand, showTypingAfterCommand } = require('./commands/autotyping');
 const { autoreadCommand, isAutoreadEnabled, handleAutoread } = require('./commands/autoread');
+// Add these lines with the other command imports (find a spot near other requires)
+const uptimeCommand = require('./commands/uptime');
+const freefireSensitivityCommand = require('./commands/freefireesensi'); // You already have this line
 
 // Command imports
 const savestatusCommand = require('./commands/savestatus');
