@@ -1,37 +1,27 @@
 const os = require('os');
 const settings = require('../settings.js');
 
-function formatTime(seconds) {
-    const days = Math.floor(seconds / (24 * 60 * 60));
-    seconds = seconds % (24 * 60 * 60);
-    const hours = Math.floor(seconds / (60 * 60));
-    seconds = seconds % (60 * 60);
-    const minutes = Math.floor(seconds / 60);
-    seconds = Math.floor(seconds % 60);
-
-    let time = '';
-    if (days > 0) time += `${days}d `;
-    if (hours > 0) time += `${hours}h `;
-    if (minutes > 0) time += `${minutes}m `;
-    if (seconds > 0 || time === '') time += `${seconds}s`;
-
-    return time.trim();
-}
-
 async function pingCommand(sock, chatId, message) {
     try {
+        // Send initial "pinging....." message
+        const sentMsg = await sock.sendMessage(chatId, { text: 'pinging.....' }, { quoted: message });
+        
         const start = Date.now();
-        // Just measure the time without sending a message
+        
+        // Small delay to make the ping measurement more meaningful
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         const end = Date.now();
-        const ping = Math.round((end - start) / 2);
+        const ping = Math.round(end - start);
 
-        const uptimeInSeconds = process.uptime();
-        const uptimeFormatted = formatTime(uptimeInSeconds);
+        // Simple ping response without uptime
+        const botInfo = `Pong! ${ping} ms`;
 
-        const botInfo = `Pong ! ${ping} ms\nUptime ${uptimeFormatted}`;
-
-        // Reply to the original message with the bot info
-        await sock.sendMessage(chatId, { text: botInfo }, { quoted: message });
+        // Edit the previous message with the result
+        await sock.sendMessage(chatId, { 
+            text: botInfo,
+            edit: sentMsg.key 
+        });
 
     } catch (error) {
         console.error('Error in ping command:', error);
