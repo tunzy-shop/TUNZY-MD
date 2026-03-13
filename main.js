@@ -39,9 +39,6 @@ const { isSudo } = require('./lib/index');
 const isOwnerOrSudo = require('./lib/isOwner');
 const { autotypingCommand, isAutotypingEnabled, handleAutotypingForMessage, handleAutotypingForCommand, showTypingAfterCommand } = require('./commands/autotyping');
 const { autoreadCommand, isAutoreadEnabled, handleAutoread } = require('./commands/autoread');
-// Add these lines with the other command imports (find a spot near other requires)
-const uptimeCommand = require('./commands/uptime');
-const freefireSensitivityCommand = require('./commands/freefireesensi'); // You already have this line
 
 // Command imports
 const savestatusCommand = require('./commands/savestatus');
@@ -92,6 +89,9 @@ const { clearCommand } = require('./commands/clear');
 const pingCommand = require('./commands/ping');
 const aliveCommand = require('./commands/alive');
 const blurCommand = require('./commands/img-blur');
+// Add these lines with the other command imports (find a spot near other requires)
+const uptimeCommand = require('./commands/uptime');
+const freefireSensitivityCommand = require('./commands/freefireesensi'); // You already have this line
 const { welcomeCommand, handleJoinEvent } = require('./commands/welcome');
 const { goodbyeCommand, handleLeaveEvent } = require('./commands/goodbye');
 const githubCommand = require('./commands/github');
@@ -391,6 +391,19 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await unpairCommand(sock, chatId, message, unpairArgs);
                 commandExecuted = true;
                 break;
+                
+                // Add these cases in the switch statement - put them with other similar commands
+
+case userMessage.startsWith('.uptime'):
+    await uptimeCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+
+// Your freefire command case - you already have this but make sure it's properly placed
+case userMessage.startsWith('.freefireesensi'):
+    await freefireSensitivityCommand(sock, chatId, message, userMessage);
+    commandExecuted = true;
+    break;
 
             case userMessage.startsWith('.autojoin'):
                 const autojoinArgs = rawText.slice(9).trim();
@@ -415,11 +428,4 @@ case userMessage.startsWith('.freefireesensi'):
                 if (quotedMessage?.stickerMessage) {
                     await simageCommand(sock, quotedMessage, chatId);
                 } else {
-                    await sock.sendMessage(chatId, { text: 'Please reply to a sticker with the .simage command to convert it.', ...channelInfo }, { quoted: message });
-                }
-                commandExecuted = true;
-                break;
-            }
-            case userMessage.startsWith('.kick'):
-                const mentionedJidListKick = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
-                await kickCommand(sock, chatId, senderId, mentionedJidList
+        
