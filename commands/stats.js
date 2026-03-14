@@ -1,6 +1,5 @@
 // commands/stats.js
 const os = require('os');
-const { performance } = require('perf_hooks');
 
 async function statsCommand(sock, chatId, message) {
     try {
