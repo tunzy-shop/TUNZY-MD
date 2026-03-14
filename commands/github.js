@@ -1,59 +1,16 @@
-e
 const moment = require('moment-timezone');
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 
 async function githubCommand(sock, chatId, message) {
   try {
-    // Try multiple possible repository names
-    const possibleRepos = [
-      'tunzy-shop/TUNZY-MD',
-      'tunzy-shop/TUNZY-BOT',  // Try alternative name
-      'tunzy-shop/tunzy-md',   // Try lowercase
-      // Add any other possible repository names here
-    ];
+    // Simple text with the repo link
+    let txt = `*TUNZY-MD REPO* \n\n`;
+    txt += `\`\`\`Repo : https://github.com/tunzy-shop/TUNZY-MD/fork\`\`\`\n\n`;
+    txt += `\`\`\`Kindly fork and star the repo\`\`\`\n\n`;
+    txt += `> DEV : TUNZY SHOP ✪`;
 
-    let json = null;
-    let repoUsed = '';
-
-    for (const repo of possibleRepos) {
-      try {
-        const repoUrl = `https://api.github.com/repos/${repo}`;
-        const res = await fetch(repoUrl);
-        if (res.ok) {
-          json = await res.json();
-          repoUsed = repo;
-          break;
-        }
-      } catch (e) {
-        continue; // Try next repository
-      }
-    }
-
-    // If no repository found, use hardcoded data but show zeros for forks/stars
-    if (!json) {
-      json = {
-        name: 'TUNZY-MD',
-        watchers_count: 0,
-        size: 5120, // 5MB in KB
-        updated_at: new Date().toISOString(),
-        forks_count: 0,
-        stargazers_count: 0
-      };
-    }
-
-    let txt = `*乂  TUNZY - MD 乂*\n\n`;
-    txt += `✪  *Name* : ${json.name}\n`;
-    txt += `✪  *Watchers* : ${json.watchers_count || 0}\n`;
-    txt += `✪  *Size* : ${((json.size || 5120) / 1024).toFixed(2)} MB\n`;
-    txt += `✪  *Last Updated* : ${moment(json.updated_at || new Date()).format('DD/MM/YY - HH:mm:ss')}\n`;
-    txt += `✪  *URL* : https://github.com/tunzy-shop/TUNZY-MD/fork\n`;
-    txt += `✪  *Forks* : ${json.forks_count || 0}\n`;
-    txt += `✪  *Stars* : ${json.stargazers_count || 0}\n\n`;
-    txt += `*_TUNZY-MD_*`;
-
-    // Find the image
+    // Find the HD image
     let imgPath;
     const possiblePaths = [
       path.join(__dirname, '../assets/repo_image.jpg'),
@@ -63,19 +20,22 @@ async function githubCommand(sock, chatId, message) {
       path.join(process.cwd(), 'repo_image.jpg')
     ];
 
+    // Find the first existing path
     for (const p of possiblePaths) {
       if (fs.existsSync(p)) {
         imgPath = p;
-        console.log(`Found image at: ${imgPath}`);
+        console.log(`✅ Found repo image at: ${imgPath}`);
         break;
       }
     }
 
+    // Send with image if found, otherwise just text
     if (imgPath) {
       const imgBuffer = fs.readFileSync(imgPath);
       await sock.sendMessage(chatId, { 
         image: imgBuffer, 
-        caption: txt 
+        caption: txt,
+        mimetype: 'image/jpeg'
       }, { quoted: message });
     } else {
       // Send without image if not found
@@ -84,8 +44,9 @@ async function githubCommand(sock, chatId, message) {
 
   } catch (error) {
     console.error('Error in github command:', error);
+    // Simple fallback without any API calls
     await sock.sendMessage(chatId, { 
-      text: '❌ Failed to get repository information. Please check the repository name.' 
+      text: `*TUNZY-MD REPO* \n\n\`\`\`Repo : https://github.com/tunzy-shop/TUNZY-MD/fork\`\`\`\n\n\`\`\`Kindly fork and star the repo\`\`\`\n\n> DEV : TUNZY SHOP ✪`
     }, { quoted: message });
   }
 }
