@@ -1,3 +1,4 @@
+e
 const moment = require('moment-timezone');
 const fetch = require('node-fetch');
 const fs = require('fs');
@@ -30,31 +31,29 @@ async function githubCommand(sock, chatId, message) {
       }
     }
 
-    // If no repository found, use hardcoded data
+    // If no repository found, use hardcoded data but show zeros for forks/stars
     if (!json) {
       json = {
         name: 'TUNZY-MD',
-        watchers_count: 10,
+        watchers_count: 0,
         size: 5120, // 5MB in KB
         updated_at: new Date().toISOString(),
-        forks_count: 5,
-        stargazers_count: 15
+        forks_count: 0,
+        stargazers_count: 0
       };
     }
 
     let txt = `*乂  TUNZY - MD 乂*\n\n`;
-    txt += `✩  *Name* : ${json.name}\n`;
-    txt += `✩  *Watchers* : ${json.watchers_count || 0}\n`;
-    txt += `✩  *Size* : ${((json.size || 5120) / 1024).toFixed(2)} MB\n`;
-    txt += `✩  *Last Updated* : ${moment(json.updated_at || new Date()).format('DD/MM/YY - HH:mm:ss')}\n`;
-    txt += `✩  *URL* : https://github.com/tunzy-shop/TUNZY-MD/fork\n`;
-    txt += `✩  *Forks* : ${json.forks_count || 0}\n`;
-    txt += `✩  *Stars* : ${json.stargazers_count || 0}\n\n`;
+    txt += `✪  *Name* : ${json.name}\n`;
+    txt += `✪  *Watchers* : ${json.watchers_count || 0}\n`;
+    txt += `✪  *Size* : ${((json.size || 5120) / 1024).toFixed(2)} MB\n`;
+    txt += `✪  *Last Updated* : ${moment(json.updated_at || new Date()).format('DD/MM/YY - HH:mm:ss')}\n`;
+    txt += `✪  *URL* : https://github.com/tunzy-shop/TUNZY-MD/fork\n`;
+    txt += `✪  *Forks* : ${json.forks_count || 0}\n`;
+    txt += `✪  *Stars* : ${json.stargazers_count || 0}\n\n`;
     txt += `*_TUNZY-MD_*`;
 
-    // Rest of your image handling code remains the same...
-    
-    // Find the image (your existing code)
+    // Find the image
     let imgPath;
     const possiblePaths = [
       path.join(__dirname, '../assets/repo_image.jpg'),
