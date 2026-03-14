@@ -1,6 +1,18 @@
 // commands/block.js
+const isOwnerOrSudo = require('../lib/isOwner');
+
 async function blockCommand(sock, chatId, message) {
     try {
+        // Check if sender is owner/sudo
+        const senderId = message.key.participant || message.key.remoteJid;
+        const senderIsOwner = await isOwnerOrSudo(senderId, sock, chatId);
+        
+        if (!message.key.fromMe && !senderIsOwner) {
+            return await sock.sendMessage(chatId, { 
+                text: '❌ This command is only for the owner/sudo.' 
+            }, { quoted: message });
+        }
+
         const mentioned = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
         let targetJid = mentioned[0];
 
