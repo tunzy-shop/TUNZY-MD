@@ -1,0 +1,29 @@
+// commands/block.js
+async function blockCommand(sock, chatId, message) {
+    try {
+        const mentioned = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
+        let targetJid = mentioned[0];
+
+        if (!targetJid && message.key.remoteJid.endsWith('@s.whatsapp.net')) {
+            targetJid = message.key.remoteJid;
+        }
+
+        if (!targetJid) {
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Please mention a user or use this command in their DM.\nExample: .block @user' 
+            });
+        }
+
+        await sock.updateBlockStatus(targetJid, 'block');
+        
+        await sock.sendMessage(chatId, { 
+            text: `✪ \`\`\`User Blocked\`\`\`\n\n@${targetJid.split('@')[0]} has been blocked.`,
+            mentions: [targetJid]
+        }, { quoted: message });
+    } catch (error) {
+        console.error('Error in block command:', error);
+        await sock.sendMessage(chatId, { text: '❌ Failed to block user.' });
+    }
+}
+
+module.exports = blockCommand;
