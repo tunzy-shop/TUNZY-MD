@@ -1,4 +1,5 @@
 // commands/unmute-user.js
+const isAdmin = require('../lib/isAdmin');
 const { mutedUsers } = require('./mute-user');
 
 async function unmuteUserCommand(sock, chatId, message) {
@@ -7,9 +8,21 @@ async function unmuteUserCommand(sock, chatId, message) {
             return await sock.sendMessage(chatId, { text: '❌ This command can only be used in groups.' });
         }
 
+        // Check if sender is admin
+        const senderId = message.key.participant || message.key.remoteJid;
+        const adminStatus = await isAdmin(sock, chatId, senderId);
+        
+        if (!adminStatus.isSenderAdmin && !message.key.fromMe) {
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Only group admins can use this command.' 
+            }, { quoted: message });
+        }
+
         const mentioned = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
         if (mentioned.length === 0) {
-            return await sock.sendMessage(chatId, { text: '❌ Please mention the user to unmute.\nExample: .unmute-user @user' });
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Please mention the user to unmute.\nExample: .unmute-user @user' 
+            }, { quoted: message });
         }
 
         const targetJid = mentioned[0];
