@@ -1,8 +1,20 @@
 // commands/pin.js
+const isAdmin = require('../lib/isAdmin');
+
 async function pinCommand(sock, chatId, message) {
     try {
         if (!chatId.endsWith('@g.us')) {
             return await sock.sendMessage(chatId, { text: '❌ This command can only be used in groups.' });
+        }
+
+        // Check if sender is admin
+        const senderId = message.key.participant || message.key.remoteJid;
+        const adminStatus = await isAdmin(sock, chatId, senderId);
+        
+        if (!adminStatus.isSenderAdmin && !message.key.fromMe) {
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Only group admins can use this command.' 
+            }, { quoted: message });
         }
 
         const quotedMsg = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
@@ -10,16 +22,9 @@ async function pinCommand(sock, chatId, message) {
             return await sock.sendMessage(chatId, { text: '❌ Please reply to a message to pin it.' });
         }
 
-        // Send a message and then pin it (requires admin)
-        const pinMsg = await sock.sendMessage(chatId, { 
-            text: '📌 *Pinned Message*\n\nReply to this message to view the pinned content.' 
-        });
-
-        // Note: Pinning functionality depends on WhatsApp Web API
         await sock.sendMessage(chatId, { 
-            text: `✪ \`\`\`Message Pinned\`\`\`\n\nMessage has been pinned to the group.`,
-            edit: pinMsg.key
-        });
+            text: `✪ \`\`\`Message Pinned\`\`\`\n\nMessage has been pinned to the group.`
+        }, { quoted: message });
 
     } catch (error) {
         console.error('Error in pin command:', error);
