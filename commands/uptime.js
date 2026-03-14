@@ -21,9 +21,9 @@ async function uptimeCommand(sock, chatId, message) {
     try {
         const uptimeInSeconds = process.uptime();
         const uptimeFormatted = formatTime(uptimeInSeconds);
-        
-        const response = `🤖 *Bot Uptime*\n\n📊 ${uptimeFormatted}`;
-        
+
+        const response = `✪ \`\`\`Uptime: ${uptimeFormatted}\`\`\``;
+
         await sock.sendMessage(chatId, { text: response }, { quoted: message });
     } catch (error) {
         console.error('Error in uptime command:', error);
