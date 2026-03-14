@@ -1,0 +1,25 @@
+// commands/unblock.js
+async function unblockCommand(sock, chatId, message) {
+    try {
+        const mentioned = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
+        let targetJid = mentioned[0];
+
+        if (!targetJid) {
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Please mention the user to unblock.\nExample: .unblock @user' 
+            });
+        }
+
+        await sock.updateBlockStatus(targetJid, 'unblock');
+        
+        await sock.sendMessage(chatId, { 
+            text: `✪ \`\`\`User Unblocked\`\`\`\n\n@${targetJid.split('@')[0]} has been unblocked.`,
+            mentions: [targetJid]
+        }, { quoted: message });
+    } catch (error) {
+        console.error('Error in unblock command:', error);
+        await sock.sendMessage(chatId, { text: '❌ Failed to unblock user.' });
+    }
+}
+
+module.exports = unblockCommand;
