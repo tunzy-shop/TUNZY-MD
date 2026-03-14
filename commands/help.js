@@ -3,218 +3,242 @@ const fs = require('fs');
 const path = require('path');
 
 async function helpCommandEdited(sock, chatId, message) {
+    // Get user info
+    const sender = message.key.participant || message.key.remoteJid;
+    
+    // Try to get pushname (contact name)
+    let userName = 'User';
+    if (message.pushName) {
+        userName = message.pushName;
+    } else {
+        try {
+            // Try to fetch contact info
+            const contact = await sock.getContact(sender);
+            if (contact && contact.name) {
+                userName = contact.name;
+            } else if (contact && contact.notify) {
+                userName = contact.notify;
+            }
+        } catch (e) {
+            // Fallback to a friendly name
+            userName = 'Dear User';
+        }
+    }
+    
     // Hidden "read more" to collapse WhatsApp message
     const readMore = String.fromCharCode(8206).repeat(4000);
 
     // Prepare caption
     const caption = `
-┏━━━━━━━━━━━━━━━━━━━
-┃ TUNZY-MD
-┃ Version : 1.0.0
-┃ Owner  : TUNZY SHOP
-┃ YouTube: Tunzy Shop
-┗━━━━━━━━━━━━━━━━━━━
+╭══〘 *TUNZY-MD* 〙══⊷
+┃ *OH Hayoo :* ${userName}
+┃ *Version :* 1.0.0
+┃ *Owner :* TUNZY SHOP
+┃ *YouTube :* Tunzy Shop
+╰═══════════════════════⊷
 ${readMore}
 
-┏━━━━━━━━[CORE]━━━━━━━
-┃ .menu / .help
-┃ .ping
-┃ .uptime
-┃ .alive
-┃ .owner
-┃ .jid
-┃ .url
-┃ .tts <text>
-┃ .joke
-┃ .quote
-┃ .fact
-┃ .news
-┃ .weather <city>
-┃ .lyrics <song>
-┃ .8ball <question>
-┃ .groupinfo
-┃ .admins / .staff
-┃ .vv
-┃ .trt <text> <lang>
-┃ .ss <link>
-┃ .attp <text>
-┗━━━━━━━━━━━━━━━━━━━━
+╭━━━━━━❮ *CORE* ❯━⊷
+┃✪ .menu / .help
+┃✪ .ping
+┃✪ .uptime
+┃✪ .alive
+┃✪ .owner
+┃✪ .jid
+┃✪ .url
+┃✪ .tts
+┃✪ .joke
+┃✪ .quote
+┃✪ .fact
+┃✪ .news
+┃✪ .weather
+┃✪ .lyrics
+┃✪ .8ball
+┃✪ .groupinfo
+┃✪ .admins / .staff
+┃✪ .vv
+┃✪ .trt
+┃✪ .ss
+┃✪ .attp
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━━[GROUP ADMIN]━━━━━
-┃ .ban
-┃ .kick
-┃ .mute / .unmute
-┃ .promote / .demote
-┃ .del
-┃ .warn
-┃ .warnings
-┃ .clear
-┃ .tag
-┃ .tagall
-┃ .tagnotadmin
-┃ .hidetag
-┃ .antilink
-┃ .antibadword
-┃ .antitag
-┃ .chatbot
-┃ .welcome
-┃ .goodbye
-┃ .resetlink
-┃ .setgname <name>
-┃ .setgdesc <desc>
-┃ .setgpp
-┃ .accept all
-┗━━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *GROUP ADMIN* ❯━⊷
+┃✪ .ban
+┃✪ .kick
+┃✪ .mute / .unmute
+┃✪ .promote / .demote
+┃✪ .del
+┃✪ .warn
+┃✪ .warnings
+┃✪ .clear
+┃✪ .tag
+┃✪ .tagall
+┃✪ .tagnotadmin
+┃✪ .hidetag
+┃✪ .antilink
+┃✪ .antibadword
+┃✪ .antitag
+┃✪ .chatbot
+┃✪ .welcome
+┃✪ .goodbye
+┃✪ .resetlink
+┃✪ .setgname
+┃✪ .setgdesc
+┃✪ .setgpp
+┃✪ .accept all
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━━[OWNER CONTROL]━━━━
-┃ .mode <public/self>
-┃ .update
-┃ .settings
-┃ .clearsession
-┃ .cleartmp
-┃ .antidelete
-┃ .anticall
-┃ .setpp <reply image>
-┃ .setmention <reply msg>
-┃ .mention
-┃ .autoread
-┃ .autoreact
-┃ .autotyping
-┃ .autostatus
-┃ .autostatus react
-┃ .pmblocker
-┃ .pmblocker setmsg
-┃ .savestatus
-┗━━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *OWNER CONTROL* ❯━⊷
+┃✪ .mode
+┃✪ .update
+┃✪ .settings
+┃✪ .clearsession
+┃✪ .cleartmp
+┃✪ .antidelete
+┃✪ .anticall
+┃✪ .setpp
+┃✪ .setmention
+┃✪ .mention
+┃✪ .autoread
+┃✪ .autoreact
+┃✪ .autotyping
+┃✪ .autostatus
+┃✪ .autostatus react
+┃✪ .pmblocker
+┃✪ .pmblocker setmsg
+┃✪ .savestatus
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━[MEDIA/STICKERS]━━━━
-┃ .sticker
-┃ .tgsticker
-┃ .simage <reply sticker>
-┃ .blur <reply image>
-┃ .crop
-┃ .removebg
-┃ .meme
-┃ .take
-┃ .emojimix
-┃ .igs <insta link>
-┃ .igsc <insta link>
-┃ .hd <reply image>
-┗━━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *MEDIA/STICKERS* ❯━⊷
+┃✪ .sticker
+┃✪ .tgsticker
+┃✪ .simage
+┃✪ .blur
+┃✪ .crop
+┃✪ .removebg
+┃✪ .meme
+┃✪ .take
+┃✪ .emojimix
+┃✪ .igs
+┃✪ .igsc
+┃✪ .hd
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━[IMAGE SEARCH]━━━━━
-┃ .pies <country>
-┃ .japan
-┃ .korean
-┃ .indonesia
-┃ .china
-┃ .hijab
-┗━━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *IMAGE SEARCH* ❯━⊷
+┃✪ .pies
+┃✪ .japan
+┃✪ .korean
+┃✪ .indonesia
+┃✪ .china
+┃✪ .hijab
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━━━━━[GAMES]━━━━━━━
-┃ .tictactoe @user
-┃ .hangman
-┃ .guess <letter>
-┃ .trivia
-┃ .answer <answer>
-┃ .truth
-┃ .dare
-┗━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *GAMES* ❯━⊷
+┃✪ .tictactoe
+┃✪ .hangman
+┃✪ .guess
+┃✪ .trivia
+┃✪ .answer
+┃✪ .truth
+┃✪ .dare
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━[AI INTELLIGENCE]━━━
-┃ .gpt <question>
-┃ .gemini <question>
-┃ .imagine <prompt>
-┃ .flux <prompt>
-┃ .sora <prompt>
-┗━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *AI INTELLIGENCE* ❯━⊷
+┃✪ .gpt
+┃✪ .gemini
+┃✪ .imagine
+┃✪ .flux
+┃✪ .sora
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━[SOURCES/REPO]━━━━━
-┃ .git
-┃ .github
-┃ .repo
-┃ .sc
-┃ .script
-┗━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *SOURCES/REPO* ❯━⊷
+┃✪ .git
+┃✪ .github
+┃✪ .repo
+┃✪ .sc
+┃✪ .script
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━━━[REACTION]━━━━━━
-┃ .nom
-┃ .poke
-┃ .cry
-┃ .kiss
-┃ .pat
-┃ .hug
-┃ .wink
-┃ .facepalm
-┗━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *REACTION* ❯━⊷
+┃✪ .nom
+┃✪ .poke
+┃✪ .cry
+┃✪ .kiss
+┃✪ .pat
+┃✪ .hug
+┃✪ .wink
+┃✪ .facepalm
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━━━━[EFFECTS]━━━━━
-┃ .heart
-┃ .horny
-┃ .lgbt
-┃ .circle
-┃ .lolice
-┃ .its-so-stupid
-┃ .namecard
-┃ .oogway
-┃ .tweet
-┃ .ytcomment
-┃ .comrade
-┃ .gay
-┃ .glass
-┃ .jail
-┃ .passed
-┃ .triggered
-┗━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *EFFECTS* ❯━⊷
+┃✪ .heart
+┃✪ .horny
+┃✪ .lgbt
+┃✪ .circle
+┃✪ .lolice
+┃✪ .its-so-stupid
+┃✪ .namecard
+┃✪ .oogway
+┃✪ .tweet
+┃✪ .ytcomment
+┃✪ .comrade
+┃✪ .gay
+┃✪ .glass
+┃✪ .jail
+┃✪ .passed
+┃✪ .triggered
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━[FUN / SOCIAL]━━━
-┃ .compliment @user
-┃ .insult @user
-┃ .flirt
-┃ .shayari
-┃ .goodnight
-┃ .roseday
-┃ .character @user
-┃ .wasted @user
-┃ .ship @user
-┃ .simp @user
-┃ .stupid @user <text>
-┗━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *FUN/SOCIAL* ❯━⊷
+┃✪ .compliment
+┃✪ .insult
+┃✪ .flirt
+┃✪ .shayari
+┃✪ .goodnight
+┃✪ .roseday
+┃✪ .character
+┃✪ .wasted
+┃✪ .ship
+┃✪ .simp
+┃✪ .stupid
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━━━[TEXT DESIGN]━━━━
-┃ .metalic
-┃ .ice
-┃ .snow
-┃ .impressive
-┃ .matrix
-┃ .light
-┃ .neon
-┃ .devil
-┃ .purple
-┃ .thunder
-┃ .hacker
-┃ .sand
-┃ .leaves
-┃ .1917
-┃ .arena
-┃ .blackpink
-┃ .glitch
-┃ .fire
-┗━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *TEXT DESIGN* ❯━⊷
+┃✪ .metalic
+┃✪ .ice
+┃✪ .snow
+┃✪ .impressive
+┃✪ .matrix
+┃✪ .light
+┃✪ .neon
+┃✪ .devil
+┃✪ .purple
+┃✪ .thunder
+┃✪ .hacker
+┃✪ .sand
+┃✪ .leaves
+┃✪ .1917
+┃✪ .arena
+┃✪ .blackpink
+┃✪ .glitch
+┃✪ .fire
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━━[MEDIA DOWNLOAD]━━━
-┃ .song <name>
-┃ .play <name>
-┃ .spotify <name>
-┃ .video <name>
-┃ .instagram <link>
-┃ .facebook <link>
-┃ .tiktok <link>
-┗━━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *MEDIA DOWNLOAD* ❯━⊷
+┃✪ .song
+┃✪ .play
+┃✪ .spotify
+┃✪ .video
+┃✪ .instagram
+┃✪ .facebook
+┃✪ .tiktok
+╰━━━━━━━━━━━━━━━━━━━━⊷
 
-┏━[SYSTEM UPDATE]━━━━
-┃ Join Official Channel 👇
-┗━━━━━━━━━━━━━━━━━━
+╭━━━━❮ *SYSTEM UPDATE* ❯━⊷
+┃✪ Join Official Channel 👇
+╰━━━━━━━━━━━━━━━━━━━━⊷
+
+> *TUNZY-MD* © 2026
     `;
 
     // Check if bot_picture.jpg exists
@@ -228,6 +252,7 @@ ${readMore}
             newsletterJid: '120363422591784062@newsletter',
             newsletterName: 'TUNZY-MD'
         }
+        // No mentionedJid needed since we're not using @ mentions
     };
 
     try {
