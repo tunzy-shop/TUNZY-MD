@@ -89,9 +89,6 @@ const { clearCommand } = require('./commands/clear');
 const pingCommand = require('./commands/ping');
 const aliveCommand = require('./commands/alive');
 const blurCommand = require('./commands/img-blur');
-// Add these lines with the other command imports (find a spot near other requires)
-const uptimeCommand = require('./commands/uptime');
-const freefireSensitivityCommand = require('./commands/freefireesensi'); // You already have this line
 const { welcomeCommand, handleJoinEvent } = require('./commands/welcome');
 const { goodbyeCommand, handleLeaveEvent } = require('./commands/goodbye');
 const githubCommand = require('./commands/github');
@@ -150,9 +147,9 @@ const { anticallCommand, readState: readAnticallState } = require('./commands/an
 const { pmblockerCommand, readState: readPmBlockerState } = require('./commands/pmblocker');
 const settingsCommand = require('./commands/settings');
 const soraCommand = require('./commands/sora');
-// Add this line with the other command imports
-const freefireSensitivityCommand = require('./commands/freefireesensi');
-
+// Add these lines with the other command imports (find a spot near other requires)
+const uptimeCommand = require('./commands/uptime');
+const freefireSensitivityCommand = require('./commands/freefireesensi'); // You already have this line
 // Global settings
 global.packname = settings.packname;
 global.author = settings.author;
@@ -385,25 +382,22 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await savestatusCommand(sock, chatId, message);
                 commandExecuted = true;
                 break;
+                
+                case userMessage.startsWith('.uptime'):
+    await uptimeCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.freefireesensi'):
+    await freefireSensitivityCommand(sock, chatId, message, userMessage);
+    commandExecuted = true;
+    break;
 
             case userMessage.startsWith('.unpair'):
                 const unpairArgs = rawText.slice(7).trim();
                 await unpairCommand(sock, chatId, message, unpairArgs);
                 commandExecuted = true;
                 break;
-                
-                // Add these cases in the switch statement - put them with other similar commands
-
-case userMessage.startsWith('.uptime'):
-    await uptimeCommand(sock, chatId, message);
-    commandExecuted = true;
-    break;
-
-// Your freefire command case - you already have this but make sure it's properly placed
-case userMessage.startsWith('.freefireesensi'):
-    await freefireSensitivityCommand(sock, chatId, message, userMessage);
-    commandExecuted = true;
-    break;
 
             case userMessage.startsWith('.autojoin'):
                 const autojoinArgs = rawText.slice(9).trim();
@@ -428,4 +422,9 @@ case userMessage.startsWith('.freefireesensi'):
                 if (quotedMessage?.stickerMessage) {
                     await simageCommand(sock, quotedMessage, chatId);
                 } else {
-        
+                    await sock.sendMessage(chatId, { text: 'Please reply to a sticker with the .simage command to convert it.', ...channelInfo }, { quoted: message });
+                }
+                commandExecuted = true;
+                break;
+            }
+            case userMessage.startsWith
