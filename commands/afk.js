@@ -1,7 +1,4 @@
 // commands/afk.js
-const fs = require('fs');
-const path = require('path');
-
 const afkUsers = new Map(); // Store AFK users: { reason, timestamp }
 
 async function afkCommand(sock, chatId, message, userMessage) {
