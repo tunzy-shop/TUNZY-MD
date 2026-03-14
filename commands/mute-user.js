@@ -1,4 +1,5 @@
 // commands/mute-user.js
+const isAdmin = require('../lib/isAdmin');
 const mutedUsers = new Map(); // Store muted users: { jid: expiryTime }
 
 async function muteUserCommand(sock, chatId, message, userMessage) {
@@ -7,9 +8,28 @@ async function muteUserCommand(sock, chatId, message, userMessage) {
             return await sock.sendMessage(chatId, { text: '❌ This command can only be used in groups.' });
         }
 
+        // Check if sender is admin
+        const senderId = message.key.participant || message.key.remoteJid;
+        const adminStatus = await isAdmin(sock, chatId, senderId);
+        
+        if (!adminStatus.isSenderAdmin && !message.key.fromMe) {
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Only group admins can use this command.' 
+            }, { quoted: message });
+        }
+
+        // Check if bot is admin
+        if (!adminStatus.isBotAdmin) {
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Please make the bot an admin first.' 
+            }, { quoted: message });
+        }
+
         const mentioned = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
         if (mentioned.length === 0) {
-            return await sock.sendMessage(chatId, { text: '❌ Please mention the user to mute.\nExample: .mute-user @user' });
+            return await sock.sendMessage(chatId, { 
+                text: '❌ Please mention the user to mute.\nExample: .mute-user @user' 
+            }, { quoted: message });
         }
 
         const targetJid = mentioned[0];
