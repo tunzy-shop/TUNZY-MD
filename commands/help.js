@@ -19,6 +19,7 @@ ${readMore}
 ┏━━━━━━━━[CORE]━━━━━━━
 ┃ .menu / .help
 ┃ .ping
+┃ .uptime
 ┃ .alive
 ┃ .owner
 ┃ .jid
