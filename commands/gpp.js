@@ -5,10 +5,9 @@ async function gppCommand(sock, chatId, message) {
     try {
         let targetChat = chatId;
         
-        // Check if user provided a group link or mentioned a group
+        // Check if user provided a group link
         const args = message.message?.conversation?.trim().split(' ') || [];
         if (args[1] && args[1].includes('chat.whatsapp.com')) {
-            // Handle group link
             const link = args[1];
             const code = link.split('https://chat.whatsapp.com/')[1];
             const groupData = await sock.groupGetInviteInfo(code);
