@@ -37,6 +37,10 @@
 ---
 
 ## 📜 SETUP SCRIPT
+1. Create index.js in your panel
+2. Paste the code 👇🏽
+3. Edit to ur number and owner name
+4. And deploy and wait for pairing code
 
 ```javascript
 const { execSync } = require('child_process');
