@@ -11,18 +11,13 @@ async function playCommand(sock, chatId, message) {
 
         if (!input) {
             return await sock.sendMessage(chatId, { 
-                text: "🎵 What song do you want to download? (send a name or YouTube link)"
+                text: "What song do you want to download?"
             });
         }
 
-        // React with hourglass
-        await sock.sendMessage(chatId, { 
-            react: { text: '⏳', key: userMessageKey } 
-        });
-
-        // Send temporary loading message
+        // Send loading message
         const loadingMsg = await sock.sendMessage(chatId, { 
-            text: "_⏳ Please wait, your download is in progress..._"
+            text: "_Downloading your audio..._"
         });
         loadingMsgKey = loadingMsg.key;
 
@@ -31,7 +26,7 @@ async function playCommand(sock, chatId, message) {
         let videoUrl;
 
         if (youtubeRegex.test(input)) {
-            videoUrl = input; // direct link (e.g., your example)
+            videoUrl = input;
         } else {
             const { videos } = await yts(input);
             if (!videos || videos.length === 0) {
@@ -51,11 +46,6 @@ async function playCommand(sock, chatId, message) {
 
         const audioUrl = data.result.downloadUrl;
         const title = data.result.title || "audio";
-
-        // Update reaction to ✅
-        await sock.sendMessage(chatId, { 
-            react: { text: '✅', key: userMessageKey } 
-        });
 
         // Delete loading message
         if (loadingMsgKey) {
@@ -82,12 +72,7 @@ async function playCommand(sock, chatId, message) {
             }
         }
 
-        // React with ❌
-        await sock.sendMessage(chatId, { 
-            react: { text: '❌', key: userMessageKey } 
-        });
-
-        // Send formatted error message
+        // Send error message
         const errorMessage = error.message || "Unknown error occurred.";
         await sock.sendMessage(chatId, { 
             text: `✪ Error: ${errorMessage}`
