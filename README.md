@@ -4,7 +4,7 @@
 
 <img src="assets/bot_picture.jpg" alt="TUNZY-MD Bot" width="300" height="300" style="border-radius: 50%; border: 3px solid #3B82F6; box-shadow: 0 10px 30px -10px #3B82F6;">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=1000&color=3B82F6&center=true&vCenter=true&width=435&lines=TUNZY+MD;BOT+WHATSAPP;UPDATED+VERSION" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=1000&color=3B82F6&center=true&vCenter=true&width=435&lines=TUNZY+MD;WHATSAPP+BOT;UPDATED+VERSION" alt="Typing SVG" />
 
 ### 🚀 Developed by [TUNZY SHOP](https://github.com/tunzy-shop)
 
