@@ -6,7 +6,6 @@ async function playCommand(sock, chatId, message) {
     let loadingMsgKey = null;
 
     try {
-        // Extract search query or URL
         const text = message.message?.conversation || message.message?.extendedTextMessage?.text;
         const input = text.split(' ').slice(1).join(' ').trim();
 
@@ -32,9 +31,8 @@ async function playCommand(sock, chatId, message) {
         let videoUrl;
 
         if (youtubeRegex.test(input)) {
-            videoUrl = input; // use direct link
+            videoUrl = input; // direct link (e.g., your example)
         } else {
-            // Search for the song
             const { videos } = await yts(input);
             if (!videos || videos.length === 0) {
                 throw new Error("No videos found for your query.");
