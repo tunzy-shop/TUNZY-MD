@@ -2,62 +2,99 @@ const yts = require('yt-search');
 const axios = require('axios');
 
 async function playCommand(sock, chatId, message) {
+    const userMessageKey = message.key;
+    let loadingMsgKey = null;
+
     try {
+        // Extract search query or URL
         const text = message.message?.conversation || message.message?.extendedTextMessage?.text;
-        const searchQuery = text.split(' ').slice(1).join(' ').trim();
+        const input = text.split(' ').slice(1).join(' ').trim();
 
-        if (!searchQuery) {
+        if (!input) {
             return await sock.sendMessage(chatId, { 
-                text: "What song do you want to download?"
+                text: "🎵 What song do you want to download? (send a name or YouTube link)"
             });
         }
 
-        // Search for the song
-        const { videos } = await yts(searchQuery);
-        if (!videos || videos.length === 0) {
-            return await sock.sendMessage(chatId, { 
-                text: "No songs found!"
-            });
-        }
-
-        // Send loading message
-        await sock.sendMessage(chatId, {
-            text: "_Please wait your download is in progress_"
+        // React with hourglass
+        await sock.sendMessage(chatId, { 
+            react: { text: '⏳', key: userMessageKey } 
         });
 
-        // Get the first video result
-        const video = videos[0];
-        const urlYt = video.url;
+        // Send temporary loading message
+        const loadingMsg = await sock.sendMessage(chatId, { 
+            text: "_⏳ Please wait, your download is in progress..._"
+        });
+        loadingMsgKey = loadingMsg.key;
 
-        // Fetch audio data from API
-        const response = await axios.get(`https://apis-keith.vercel.app/download/dlmp3?url=${urlYt}`);
+        // Check if input is a YouTube URL
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+        let videoUrl;
+
+        if (youtubeRegex.test(input)) {
+            videoUrl = input; // use direct link
+        } else {
+            // Search for the song
+            const { videos } = await yts(input);
+            if (!videos || videos.length === 0) {
+                throw new Error("No videos found for your query.");
+            }
+            videoUrl = videos[0].url;
+        }
+
+        // Fetch audio from API
+        const apiUrl = `https://apis-keith.vercel.app/download/dlmp3?url=${encodeURIComponent(videoUrl)}`;
+        const response = await axios.get(apiUrl);
         const data = response.data;
 
-        if (!data || !data.status || !data.result || !data.result.downloadUrl) {
-            return await sock.sendMessage(chatId, { 
-                text: "Failed to fetch audio from the API. Please try again later."
-            });
+        if (!data?.status || !data?.result?.downloadUrl) {
+            throw new Error("API returned an invalid response.");
         }
 
         const audioUrl = data.result.downloadUrl;
-        const title = data.result.title;
+        const title = data.result.title || "audio";
+
+        // Update reaction to ✅
+        await sock.sendMessage(chatId, { 
+            react: { text: '✅', key: userMessageKey } 
+        });
+
+        // Delete loading message
+        if (loadingMsgKey) {
+            await sock.sendMessage(chatId, { delete: loadingMsgKey });
+        }
 
         // Send the audio
         await sock.sendMessage(chatId, {
             audio: { url: audioUrl },
             mimetype: "audio/mpeg",
-            fileName: `${title}.mp3`
+            fileName: `${title}.mp3`,
+            ptt: false
         }, { quoted: message });
 
     } catch (error) {
-        console.error('Error in song2 command:', error);
+        console.error('Error in playCommand:', error);
+
+        // Clean up loading message
+        if (loadingMsgKey) {
+            try {
+                await sock.sendMessage(chatId, { delete: loadingMsgKey });
+            } catch (deleteError) {
+                console.error('Failed to delete loading message:', deleteError);
+            }
+        }
+
+        // React with ❌
         await sock.sendMessage(chatId, { 
-            text: "Download failed. Please try again later."
+            react: { text: '❌', key: userMessageKey } 
+        });
+
+        // Send formatted error message
+        const errorMessage = error.message || "Unknown error occurred.";
+        await sock.sendMessage(chatId, { 
+            text: `✪ Error: ${errorMessage}`
         });
     }
 }
 
-module.exports = playCommand; 
-
-/*Powered by KNIGHT-BOT*
-*Credits to Keith MD*`*/
+module.exports = playCommand;
