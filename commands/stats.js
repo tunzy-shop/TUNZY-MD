@@ -10,7 +10,7 @@ async function statsCommand(sock, chatId, message) {
         const memoryUsed = (process.memoryUsage().rss / 1024 / 1024).toFixed(0);
         const cpuUsage = (os.loadavg()[0] * 100).toFixed(0);
 
-        const stats = ````TUNZY-MD``` Stats
+        const stats = `TUNZY-MD2 Stats
 
 *Msgs Count*
 ${msgCount}
