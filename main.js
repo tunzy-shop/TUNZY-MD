@@ -86,7 +86,6 @@ const { lyricsCommand } = require('./commands/lyrics');
 const { dareCommand } = require('./commands/dare');
 const { truthCommand } = require('./commands/truth');
 const { clearCommand } = require('./commands/clear');
-const pingCommand = require('./commands/ping');
 const aliveCommand = require('./commands/alive');
 const blurCommand = require('./commands/img-blur');
 const { welcomeCommand, handleJoinEvent } = require('./commands/welcome');
@@ -149,6 +148,18 @@ const settingsCommand = require('./commands/settings');
 const soraCommand = require('./commands/sora');
 // Add these lines with the other command imports (find a spot near other requires)
 const uptimeCommand = require('./commands/uptime');
+// Add these with your other requires
+const { afkCommand, checkAFK, removeAFK } = require('./commands/afk');
+const vcfCommand = require('./commands/vcf');
+const addCommand = require('./commands/add');
+const { muteUserCommand, isUserMuted } = require('./commands/mute-user');
+const unmuteUserCommand = require('./commands/unmute-user');
+const pinCommand = require('./commands/pin');
+const pingCommand = require('./commands/ping');
+const unpinCommand = require('./commands/unpin');
+const statsCommand = require('./commands/stats');
+const gppCommand = require('./commands/gpp');
+const leaveCommand = require('./commands/leave');
 // Global settings
 global.packname = settings.packname;
 global.author = settings.author;
@@ -314,6 +325,31 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 // Only run chatbot in public mode or for owner/sudo
                 if (isPublic || isOwnerOrSudoCheck) {
                     await handleChatbotResponse(sock, chatId, message, userMessage, senderId);
+                    // 🔥 AFK CHECKING CODE - ADD AFTER VARIABLE DEFINITIONS 🔥
+// Check for AFK users when someone is mentioned
+if (message.message?.extendedTextMessage?.contextInfo?.mentionedJid) {
+    const mentioned = message.message.extendedTextMessage.contextInfo.mentionedJid;
+    for (const mention of mentioned) {
+        const afkInfo = checkAFK(mention);
+        if (afkInfo) {
+            await sock.sendMessage(chatId, {
+                text: `⚠️ @${mention.split('@')[0]} is AFK\n📝 *Reason:* ${afkInfo.reason}`,
+                mentions: [mention]
+            });
+        }
+    }
+}
+
+// Check if message sender was AFK and remove status
+if (checkAFK(senderId)) {
+    removeAFK(senderId);
+    const ownerName = senderId.split('@')[0];
+    await sock.sendMessage(chatId, { 
+        text: `✪ \`\`\`Welcome Back!\`\`\`\n\n@${ownerName} is back.`,
+        mentions: [senderId]
+    });
+}
+// 🔥 END OF AFK CODE 🔥
                 }
             }
             return;
@@ -384,6 +420,62 @@ async function handleMessages(sock, messageUpdate, printLog) {
 
                 case userMessage.startsWith('.uptime'):
     await uptimeCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+    
+    // Add these cases in your switch statement
+case userMessage.startsWith('.afk'):
+    await afkCommand(sock, chatId, message, userMessage);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.vcf'):
+    await vcfCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.add'):
+    await addCommand(sock, chatId, message, userMessage);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.mute-user'):
+    await muteUserCommand(sock, chatId, message, userMessage);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.unmute-user'):
+    await unmuteUserCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+    
+  case userMessage.startsWith('.ping'):
+        await pingCommand(sock, chatId, message);
+        commandExecuted = true;
+        break;
+
+case userMessage.startsWith('.pin'):
+    await pinCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.unpin'):
+    await unpinCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.stats'):
+    await statsCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.gpp'):
+    await gppCommand(sock, chatId, message);
+    commandExecuted = true;
+    break;
+
+case userMessage.startsWith('.leave'):
+    await leaveCommand(sock, chatId, message);
     commandExecuted = true;
     break;
 
@@ -710,9 +802,6 @@ case userMessage.startsWith('.freefireesensi'):
             case userMessage.startsWith('.demote'):
                 const mentionedJidListDemote = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
                 await demoteCommand(sock, chatId, mentionedJidListDemote, message);
-                break;
-            case userMessage === '.ping':
-                await pingCommand(sock, chatId, message);
                 break;
             case userMessage === '.alive':
                 await aliveCommand(sock, chatId, message);
