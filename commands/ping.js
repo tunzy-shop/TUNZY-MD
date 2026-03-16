@@ -12,10 +12,10 @@ async function pingCommand(sock, chatId, message) {
         await new Promise(resolve => setTimeout(resolve, 100));
 
         const end = Date.now();
-        const ping = Math.round(end - start);
+        const speed = Math.round(end - start);
 
-        // Ping response with ✪ bullet and MD format
-        const botInfo = `✪ \`\`\`Pong! ${ping} ms\`\`\``;
+        // Response with ✪ bullet and MD format
+        const botInfo = `✪ \`\`\`Pong! ${speed} ms\`\`\``;
 
         // Edit the previous message with the result
         await sock.sendMessage(chatId, { 
