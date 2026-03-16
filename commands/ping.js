@@ -7,9 +7,8 @@ async function pingCommand(sock, chatId, message) {
 
         const start = Date.now();
 
-        // Random delay between 200ms and 2000ms
-        const randomDelay = Math.floor(Math.random() * (2000 - 200 + 1)) + 200;
-        await new Promise(resolve => setTimeout(resolve, randomDelay));
+        // Delay to make ping reach ~2000ms
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         const end = Date.now();
         const speed = Math.round(end - start);
