@@ -8,9 +8,11 @@ async function pingCommand(sock, chatId, message) {
         // Send initial "Pinging......." message
         const sentMsg = await sock.sendMessage(chatId, { text: 'Pinging.......' }, { quoted: message });
         
-        // Measure actual network round-trip time by sending a receipt or typing indicator
-        // This will show real latency that can go up to 1900ms or more
-        await sock.sendPresenceUpdate('composing', chatId);
+        // Send a lightweight read receipt or just wait for network round-trip
+        // This sends a read receipt without showing typing
+        if (message?.key) {
+            await sock.readMessages([message.key]);
+        }
         
         const end = Date.now();
         const speed = Math.round(end - start);
