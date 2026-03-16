@@ -1,3 +1,4 @@
+const { updateMessageCount, updateCommandCount } = require('./commands/stats.js');
 /**
  * TUNZYMD- A WhatsApp Bot
  * Copyright (c) 2024 Professor
