@@ -3,18 +3,22 @@ const settings = require('../settings.js');
 
 async function pingCommand(sock, chatId, message) {
     try {
-        const sentMsg = await sock.sendMessage(chatId, { text: 'Pinging.......' }, { quoted: message });
-
         const start = Date.now();
-
-        // Delay to make ping reach ~2000ms
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
+        
+        // Send initial "Pinging......." message
+        const sentMsg = await sock.sendMessage(chatId, { text: 'Pinging.......' }, { quoted: message });
+        
+        // Measure actual network round-trip time by sending a receipt or typing indicator
+        // This will show real latency that can go up to 1900ms or more
+        await sock.sendPresenceUpdate('composing', chatId);
+        
         const end = Date.now();
         const speed = Math.round(end - start);
 
+        // Response with ✪ bullet and MD format
         const botInfo = `✪ \`\`\`Pong! ${speed} ms\`\`\``;
 
+        // Edit the previous message with the result
         await sock.sendMessage(chatId, { 
             text: botInfo,
             edit: sentMsg.key 
