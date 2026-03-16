@@ -47,10 +47,14 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
 const config = {
     OWNER_NUMBER: '234XXXXXXXXXX', // CHANGE THIS TO YOUR NUMBER
-    BOT_NAME: 'TUNZY-MD',
-    OWNER_NAME: 'YourName'
+    OWNER_NAME: 'TUNZY', // Change this to your name
+    BOT_NAME: 'TUNZY-MD'
 };
 
 try {
@@ -60,51 +64,139 @@ try {
     console.log('⏳ Cloning repository...');
     execSync('git clone https://github.com/tunzy-shop/TUNZY-MD temp-dir', { stdio: 'inherit' });
     
-    // Move files
+    // Move files from temp-dir to current directory
+    console.log('📂 Moving files...');
     const files = fs.readdirSync('temp-dir');
     for (const file of files) {
         if (file !== '.git') {
-            if (fs.existsSync(file)) {
-                fs.rmSync(file, { recursive: true, force: true });
+            const srcPath = path.join('temp-dir', file);
+            const destPath = path.join(process.cwd(), file);
+            
+            // Remove destination if it exists
+            if (fs.existsSync(destPath)) {
+                fs.rmSync(destPath, { recursive: true, force: true });
             }
-            fs.renameSync(`temp-dir/${file}`, file);
+            
+            // Move file
+            fs.renameSync(srcPath, destPath);
         }
     }
+    
+    // Remove temp directory
     fs.rmdirSync('temp-dir', { recursive: true });
     
-    // Update owner.json
-    if (fs.existsSync('data/owner.json')) {
-        let ownerData = JSON.parse(fs.readFileSync('data/owner.json', 'utf8'));
-        if (!Array.isArray(ownerData)) ownerData = [];
-        const ownerWithSuffix = config.OWNER_NUMBER.includes('@') ? 
-            config.OWNER_NUMBER : `${config.OWNER_NUMBER}@s.whatsapp.net`;
-        if (!ownerData.includes(ownerWithSuffix)) {
-            ownerData.push(ownerWithSuffix);
-            fs.writeFileSync('data/owner.json', JSON.stringify(ownerData, null, 2));
-            console.log('✅ Owner number configured');
+    console.log('⚙️ Configuring files...');
+    
+    // ============================================
+    // EDIT SETTINGS.JS - WITH COLON FORMAT
+    // ============================================
+    
+    const settingsPath = path.join(process.cwd(), 'settings.js');
+    if (fs.existsSync(settingsPath)) {
+        console.log('📝 Reading settings.js...');
+        
+        // Read the file
+        let content = fs.readFileSync(settingsPath, 'utf8');
+        let lines = content.split('\n');
+        let newLines = [];
+        let modified = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            let originalLine = line;
+            
+            // Check for botOwner line with colon format
+            if (line.includes('botOwner:')) {
+                // Replace with botOwner: 'NAME', // Your name
+                line = `  botOwner: '${config.OWNER_NAME}', // Your name`;
+                if (line !== originalLine) {
+                    console.log(`  ✅ Line ${i+1}: Updated botOwner to "${config.OWNER_NAME}"`);
+                    modified = true;
+                }
+            }
+            // Check for ownerNumber line with colon format
+            else if (line.includes('ownerNumber:')) {
+                // Replace with ownerNumber: 'NUMBER', // Set your number here
+                line = `  ownerNumber: '${config.OWNER_NUMBER}', // Set your number here without + symbol, just add country code & number without any space`;
+                if (line !== originalLine) {
+                    console.log(`  ✅ Line ${i+1}: Updated ownerNumber to "${config.OWNER_NUMBER}"`);
+                    modified = true;
+                }
+            }
+            
+            newLines.push(line);
+        }
+        
+        // Write back if modified
+        if (modified) {
+            fs.writeFileSync(settingsPath, newLines.join('\n'));
+            console.log('✅ settings.js has been updated successfully');
+        } else {
+            console.log('⚠️ No changes needed in settings.js');
+        }
+        
+        // Show final content
+        console.log('\n📄 Final settings.js content:');
+        const finalContent = fs.readFileSync(settingsPath, 'utf8');
+        const finalLines = finalContent.split('\n');
+        for (let i = 0; i < finalLines.length; i++) {
+            if (finalLines[i].includes('botOwner') || finalLines[i].includes('ownerNumber')) {
+                console.log(`   ${finalLines[i].trim()}`);
+            }
+        }
+        
+    } else {
+        console.log('❌ settings.js not found!');
+    }
+    
+    // ============================================
+    // EDIT DATA/OWNER.JSON
+    // ============================================
+    
+    const ownerJsonPath = path.join(process.cwd(), 'data', 'owner.json');
+    if (fs.existsSync(ownerJsonPath)) {
+        try {
+            // Write the array with owner number
+            const ownerData = [config.OWNER_NUMBER];
+            fs.writeFileSync(ownerJsonPath, JSON.stringify(ownerData, null, 2));
+            console.log('✅ Updated data/owner.json');
+        } catch (e) {
+            console.log('❌ Error updating owner.json:', e.message);
         }
     }
     
-    // Update premium.json
-    if (fs.existsSync('data/premium.json')) {
-        let premiumData = JSON.parse(fs.readFileSync('data/premium.json', 'utf8'));
-        if (!Array.isArray(premiumData)) premiumData = [];
-        const ownerWithSuffix = config.OWNER_NUMBER.includes('@') ? 
-            config.OWNER_NUMBER : `${config.OWNER_NUMBER}@s.whatsapp.net`;
-        if (!premiumData.includes(ownerWithSuffix)) {
-            premiumData.push(ownerWithSuffix);
-            fs.writeFileSync('data/premium.json', JSON.stringify(premiumData, null, 2));
+    // ============================================
+    // EDIT DATA/PREMIUM.JSON
+    // ============================================
+    
+    const premiumJsonPath = path.join(process.cwd(), 'data', 'premium.json');
+    if (fs.existsSync(premiumJsonPath)) {
+        try {
+            // Write the array with owner number
+            const premiumData = [config.OWNER_NUMBER];
+            fs.writeFileSync(premiumJsonPath, JSON.stringify(premiumData, null, 2));
+            console.log('✅ Updated data/premium.json');
+        } catch (e) {
+            console.log('❌ Error updating premium.json:', e.message);
         }
     }
     
-    console.log('📦 Installing dependencies...');
+    console.log('\n📦 Installing dependencies...');
     execSync('npm install', { stdio: 'inherit' });
     
-    console.log('🚀 Starting bot...');
+    console.log('\n✅✅✅ SETUP COMPLETE! ✅✅✅');
+    console.log('\n📱 Settings updated:');
+    console.log(`   botOwner: '${config.OWNER_NAME}', // Your name`);
+    console.log(`   ownerNumber: '${config.OWNER_NUMBER}', // Set your number here`);
+    console.log(`   data/owner.json: ["${config.OWNER_NUMBER}"]`);
+    console.log(`   data/premium.json: ["${config.OWNER_NUMBER}"]`);
+    
+    console.log('\n🚀 Starting bot...');
     console.log('\n📱 Scan the QR code below with WhatsApp:\n');
+    
     execSync('npm start', { stdio: 'inherit' });
     
 } catch (err) {
-    console.error('❌ Setup failed:', err.message);
+    console.error('\n❌ Setup failed:', err.message);
     console.log('\n💡 Tip: If you see "npm error ENOENT", change startup command to: node index.js');
 }
