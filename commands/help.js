@@ -60,6 +60,9 @@ ${readMore}
 ┃✪ .trt
 ┃✪ .ss
 ┃✪ .attp
+┃✪ .stats
+┃✪ .vcf
+┃✪ .gpp
 ╰━━━━━━━━━━━━━━━━━━━━⊷
 
 ╭━━━━❮ *GROUP ADMIN* ❯━⊷
@@ -86,6 +89,11 @@ ${readMore}
 ┃✪ .setgdesc
 ┃✪ .setgpp
 ┃✪ .accept all
+┃✪ .add
+┃✪ .mute-user
+┃✪ .unmute-user
+┃✪ .pin
+┃✪ .unpin
 ╰━━━━━━━━━━━━━━━━━━━━⊷
 
 ╭━━━━❮ *OWNER CONTROL* ❯━⊷
@@ -107,6 +115,8 @@ ${readMore}
 ┃✪ .pmblocker
 ┃✪ .pmblocker setmsg
 ┃✪ .savestatus
+┃✪ .leave
+┃✪ .afk
 ╰━━━━━━━━━━━━━━━━━━━━⊷
 
 ╭━━━━❮ *MEDIA/STICKERS* ❯━⊷
@@ -121,7 +131,8 @@ ${readMore}
 ┃✪ .emojimix
 ┃✪ .igs
 ┃✪ .igsc
-┃✪ .hd
+┃✪ .hd/remini
+┃✪ .gpp
 ╰━━━━━━━━━━━━━━━━━━━━⊷
 
 ╭━━━━❮ *IMAGE SEARCH* ❯━⊷
