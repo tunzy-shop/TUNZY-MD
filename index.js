@@ -316,13 +316,13 @@ async function startXeonBotInc() {
             await delay(1999)
             console.log(chalk.yellow(`\n\n                  ${chalk.bold.blue(`[ ${global.botname || 'TUNZY-MD'} ]`)}\n\n`))
             console.log(chalk.cyan(`< ================================================== >`))
-            console.log(chalk.magenta(`\n${global.themeemoji || '•'} YT CHANNEL: Hacking Unveiled`))
-            console.log(chalk.magenta(`${global.themeemoji || '•'} GITHUB: RedzAdmin`))
+            console.log(chalk.magenta(`\n${global.themeemoji || '•'} YT CHANNEL: Tunzy Shop`))
+            console.log(chalk.magenta(`${global.themeemoji || '•'} GITHUB: tunzy-shop`))
             console.log(chalk.magenta(`${global.themeemoji || '•'} WA NUMBER: ${owner}`))
-            console.log(chalk.magenta(`${global.themeemoji || '•'} CREDIT: CODEBREAKER`))
+            console.log(chalk.magenta(`${global.themeemoji || '•'} CREDIT: TUNZY`))
             console.log(chalk.green(`${global.themeemoji || '•'} 🤖 Bot Connected Successfully! ✅`))
             console.log(chalk.blue(`Bot Version: ${settings.version}`))
-            console.log(chalk.cyan(`Auto-join: Enabled`))
+            console.log(chalk.cyan(`Damnn`))
         }
 
         if (connection === 'close') {
@@ -386,6 +386,16 @@ async function startXeonBotInc() {
         }
     });
 
+// Inside the messages.upsert event, after getting the message
+if (!msg.key.fromMe) {
+    updateMessageCount(); // Add this line
+    
+    // Check if it's a command
+    const messageText = msg.message?.conversation || msg.message?.extendedTextMessage?.text || '';
+    if (messageText.startsWith('.')) { // or whatever prefix you use
+        updateCommandCount(); // Add this line
+    }
+}
     XeonBotInc.ev.on('status.update', async (status) => {
         await handleStatus(XeonBotInc, status);
     });
