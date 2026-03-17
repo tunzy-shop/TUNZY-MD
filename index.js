@@ -45,9 +45,6 @@ const { PHONENUMBER_MCC } = require('@whiskeysockets/baileys/lib/Utils/generics'
 const { rmSync, existsSync } = require('fs')
 const { join } = require('path')
 
-// Import stats functions 👈 ADDED
-const { updateMessageCount, updateCommandCount } = require('./commands/stats.js'); // 👈 ADDED
-
 // Import lightweight store
 const store = require('./lib/lightweight_store')
 
@@ -167,25 +164,6 @@ async function startXeonBotInc() {
         try {
             const mek = chatUpdate.messages[0]
             if (!mek.message) return
-
-            // 👇 ADD STATS COUNTING HERE 👇
-            // Count every message (except bot's own messages)
-            if (!mek.key.fromMe) {
-                updateMessageCount(); // 👈 ADDED - Count all incoming messages
-            }
-            
-            // Get message text for command detection
-            const messageText = mek.message?.conversation || 
-                               mek.message?.extendedTextMessage?.text || 
-                               mek.message?.imageMessage?.caption || 
-                               mek.message?.videoMessage?.caption || '';
-            
-            // Check if it's a command (using your prefix - check your settings for actual prefix)
-            // Common prefixes are '.', '!', '/', '#'
-            if (messageText.startsWith('.') || messageText.startsWith('!') || messageText.startsWith('/')) {
-                updateCommandCount(); // 👈 ADDED - Count commands
-            }
-            // 👆 END STATS COUNTING 👆
 
             // Track user for broadcast (ADD THIS BLOCK)
             try {
