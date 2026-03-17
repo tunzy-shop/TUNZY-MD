@@ -43,16 +43,13 @@
 4. And deploy and wait for pairing code
 
 ```javascript
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
 
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const config = {
-    OWNER_NUMBER: '234XXXXXXXXXX', // CHANGE THIS TO YOUR NUMBER
+    OWNER_NUMBER: '2250779042402', // CHANGE THIS TO YOUR NUMBER
     OWNER_NAME: 'TUNZY', // Change this to your name
     BOT_NAME: 'TUNZY-MD'
 };
