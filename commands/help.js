@@ -32,7 +32,7 @@ async function helpCommandEdited(sock, chatId, message) {
     const caption = `
 ╭══〘 *TUNZY-MD* 〙══⊷
 ┃ *OH Hayoo :* ${userName}
-┃ *Version :* 1.0.0
+┃ *Version :* 2.0.0
 ┃ *Owner :* TUNZY SHOP
 ┃ *YouTube :* Tunzy Shop
 ╰═══════════════════════⊷
