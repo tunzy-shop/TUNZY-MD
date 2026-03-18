@@ -7,6 +7,8 @@ async function githubCommand(sock, chatId, message) {
     // Simple text with the repo link
     let txt = `*TUNZY-MD REPO* \n\n`;
     txt += `\`\`\`Repo : https://github.com/tunzy-shop/TUNZY-MD/fork\`\`\`\n\n`;
+    txt += `\`\`\`Tutorial/telegram : https://t.me/tunzy_md/3\`\`\`\n\n`;
+    txt += `\`\`\`Tutorial/youTube : https://youtu.be/xz5fPomVyj8?si=Nm09Nkmgl2W_iXXy\`\`\`\n\n`;
     txt += `\`\`\`Kindly fork and star the repo\`\`\`\n\n`;
     txt += `> DEV : TUNZY SHOP ✪`;
 
@@ -46,7 +48,7 @@ async function githubCommand(sock, chatId, message) {
     console.error('Error in github command:', error);
     // Simple fallback without any API calls
     await sock.sendMessage(chatId, { 
-      text: `*TUNZY-MD REPO* \n\n\`\`\`Repo : https://github.com/tunzy-shop/TUNZY-MD/fork\`\`\`\n\n\`\`\`Kindly fork and star the repo\`\`\`\n\n> DEV : TUNZY SHOP ✪`
+      text: `*TUNZY-MD REPO* \n\n\`\`\`Repo : https://github.com/tunzy-shop/TUNZY-MD/fork\`\`\`\n\n\`\`\`Tutorial/telegram : https://t.me/tunzy_md/3\`\`\`\n\n\`\`\`Tutorial/youTube : https://youtu.be/xz5fPomVyj8?si=Nm09Nkmgl2W_iXXy\`\`\`\n\n\`\`\`Kindly fork and star the repo\`\`\`\n\n> DEV : TUNZY SHOP ✪`
     }, { quoted: message });
   }
 }
