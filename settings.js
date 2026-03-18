@@ -5,7 +5,7 @@ const settings = {
   botOwner: 'TUNZY', // Your name
   ownerNumber: '2250779042402', //Set your number here without + symbol, just add country code & number without any space
   giphyApiKey: 'NrSjG6var2uiuSYDm0xTqCX0xcFgGj4s',
-  commandMode: "public",
+  commandMode: "private",
   maxStoreMessages: 20, 
   storeWriteInterval: 10000,
   description: "This is a bot for managing group commands and automating tasks.",
