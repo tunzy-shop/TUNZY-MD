@@ -18,7 +18,7 @@
 
 <div align="center">
 
-[![Katabumb](https://img.shields.io/badge/Katabumb-Deploy_Now-3B82F6?style=for-the-badge&logo=cloudflare&logoColor=white)](https://katabumb.com)
+[![Katabumb](https://img.shields.io/badge/Katabumb-Deploy_Now-3B82F6?style=for-the-badge&logo=cloudflare&logoColor=white)](https://dashboard.katabump.com)
 [![bothosting](https://img.shields.io/badge/bothosting-Deploy_Now-3B82F6?style=for-the-badge&logo=heroku&logoColor=white)](https://bothosting.com)
 
 </div>
