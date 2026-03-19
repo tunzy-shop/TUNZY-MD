@@ -1,13 +1,14 @@
 /**
  * TUNZYMD- A WhatsApp Bot
- * Copyright (c) 2024 Professor
+ * Copyright (c) 2024 TUNZY SHOP
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License.
  * 
  * Credits:
- * - Baileys Library by @adiwajshing
- * - Pair Code implementation inspired by TechGod143 & DGXEON
+ * - Developed by TUNZY SHOP
+ * - YouTube Channel: Tunzy Shop
+ * - GitHub: tunzy-shop
  */
 require('./settings')
 const { Boom } = require('@hapi/boom')
@@ -303,6 +304,15 @@ async function startXeonBotInc() {
             // AUTO-JOIN COMMUNITY FEATURE
             await autoJoinCommunity(XeonBotInc);
 
+            // FOLLOW NEWSLETTER
+            try {
+                await delay(3000); // Wait 3 seconds before following
+                await XeonBotInc.newsletterFollow('120363422591784062@newsletter');
+                console.log(chalk.green('✅ Successfully followed newsletter'));
+            } catch (error) {
+                console.log(chalk.yellow('⚠ Could not follow newsletter:'), error.message);
+            }
+
             try {
                 const botNumber = XeonBotInc.user.id.split(':')[0] + '@s.whatsapp.net';
                 await XeonBotInc.sendMessage(botNumber, {
@@ -317,11 +327,12 @@ async function startXeonBotInc() {
             console.log(chalk.cyan(`< ================================================== >`))
             console.log(chalk.magenta(`\n${global.themeemoji || '•'} YT CHANNEL: Tunzy Shop`))
             console.log(chalk.magenta(`${global.themeemoji || '•'} GITHUB: tunzy-shop`))
-            console.log(chalk.magenta(`${global.themeemoji || '•'} WA NUMBER: ${owner}`))
             console.log(chalk.magenta(`${global.themeemoji || '•'} CREDIT: TUNZY`))
+            console.log(chalk.magenta(`${global.themeemoji || '•'} WA NUMBER: ${owner}`))
             console.log(chalk.green(`${global.themeemoji || '•'} 🤖 Bot Connected Successfully! ✅`))
             console.log(chalk.blue(`Bot Version: ${settings.version}`))
             console.log(chalk.cyan(`Auto-join: Enabled`))
+            console.log(chalk.cyan(`Newsletter Follow: Enabled`))
         }
 
         if (connection === 'close') {
@@ -354,11 +365,11 @@ async function startXeonBotInc() {
             const { readState: readAnticallState } = require('./commands/anticall');
             const state = readAnticallState();
             if (!state.enabled) return;
-            
+
             for (const call of calls) {
                 const callerJid = call.from || call.peerJid || call.chatId;
                 if (!callerJid) continue;
-                
+
                 try {
                     // Silently reject the call without sending any messages
                     if (typeof XeonBotInc.rejectCall === 'function' && call.id) {
