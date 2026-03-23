@@ -14,32 +14,27 @@ async function vcfCommand(sock, chatId, message) {
         let vcfData = '';
 
         for (const participant of participants) {
-            const jid = participant.id;
-            const number = jid.split('@')[0];
+            // Get the raw phone number from JID (e.g., "2348123456789")
+            let rawNumber = participant.id.split('@')[0];
             
-            let name = '';
+            // Remove any non-digit characters (just in case)
+            let cleanNumber = rawNumber.replace(/\D/g, '');
             
-            try {
-                // Get the person's WhatsApp name from pushName
-                if (participant.pushName && participant.pushName.trim() !== '') {
-                    name = participant.pushName;
-                } else {
-                    // If no name, save as TMD-number
-                    name = `TMD-${number}`;
-                }
-                
-                // Clean the name for VCF format
-                name = name.replace(/[;,]/g, '').trim();
-                
-                // Add to VCF data
-                vcfData += `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;type=CELL:+${number}\nEND:VCARD\n`;
-                
-            } catch (error) {
-                console.error(`Error processing ${jid}:`, error);
-                // Fallback to TMD-number if error occurs
-                name = `TMD-${number}`;
-                vcfData += `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;type=CELL:+${number}\nEND:VCARD\n`;
+            // Build the phone number with '+' for international format
+            const formattedNumber = `+${cleanNumber}`;
+            
+            // Get the WhatsApp name (pushName) – this is the name the user set on WhatsApp
+            let name = participant.pushName;
+            if (!name || name.trim() === '') {
+                // Fallback: TMD- followed by the full number (including country code)
+                name = `TMD-${cleanNumber}`;
             }
+
+            // Sanitize name (remove characters that can break VCF)
+            name = name.replace(/[;,]/g, '').trim();
+
+            // Build VCF entry
+            vcfData += `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;TYPE=CELL:${formattedNumber}\nEND:VCARD\n`;
         }
 
         const buffer = Buffer.from(vcfData, 'utf-8');
