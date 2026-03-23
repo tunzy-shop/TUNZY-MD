@@ -12,30 +12,31 @@ async function vcfCommand(sock, chatId, message) {
         const participants = groupMetadata.participants;
 
         let vcfData = '';
+        let debugInfo = 'Exported numbers:\n';
 
         for (const participant of participants) {
-            // Get the raw phone number from JID (e.g., "2348123456789")
-            let rawNumber = participant.id.split('@')[0];
+            // Get the raw number from JID (e.g., "2348123456789")
+            const rawNumber = participant.id.split('@')[0];
+            // Use exactly this number, add '+' for international format
+            const phoneNumber = `+${rawNumber}`;
             
-            // Remove any non-digit characters (just in case)
-            let cleanNumber = rawNumber.replace(/\D/g, '');
-            
-            // Build the phone number with '+' for international format
-            const formattedNumber = `+${cleanNumber}`;
-            
-            // Get the WhatsApp name (pushName) – this is the name the user set on WhatsApp
+            // Get WhatsApp display name (pushName)
             let name = participant.pushName;
             if (!name || name.trim() === '') {
-                // Fallback: TMD- followed by the full number (including country code)
-                name = `TMD-${cleanNumber}`;
+                name = `TMD-${rawNumber}`;
             }
-
-            // Sanitize name (remove characters that can break VCF)
+            // Sanitize name (remove characters that could break VCF)
             name = name.replace(/[;,]/g, '').trim();
 
             // Build VCF entry
-            vcfData += `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;TYPE=CELL:${formattedNumber}\nEND:VCARD\n`;
+            vcfData += `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;TYPE=CELL:${phoneNumber}\nEND:VCARD\n`;
+            
+            // For debugging – you can check your console to verify numbers
+            debugInfo += `${name} → ${phoneNumber}\n`;
         }
+
+        // Optional: log the first few entries to see if numbers are correct
+        console.log(debugInfo);
 
         const buffer = Buffer.from(vcfData, 'utf-8');
 
